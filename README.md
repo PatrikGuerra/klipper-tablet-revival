@@ -33,19 +33,24 @@ SSH é usado para administração. O transporte da interface entre o BTT Pi e o 
 - [Diagnóstico, manutenção e rollback](docs/MANUTENCAO.md)
 - [Referências e procedência dos arquivos](docs/REFERENCIAS.md)
 - [Validação dos scripts e evidências](docs/VALIDACAO.md)
+- [Backup completo e reconexão automática testada](docs/BACKUP_E_RECONEXAO.md)
 - [Roteiro original de planejamento](docs/REFERENCIA_ORIGINAL.md)
 
 ## Arquivos executáveis e configuração
 
 | Arquivo | Uso |
 |---|---|
-| `scripts/launch_KlipperScreen.sh` | Launcher usado no BTT, baseado no exemplo oficial; serial deve ser ajustado para outro tablet |
+| `scripts/launch_KlipperScreen.sh` | Launcher da etapa inicial, baseado no exemplo oficial; preservado como referência |
 | `scripts/diagnostico.sh` | Inspeção do sistema, ADB e X11, sem instalação nem comandos de impressora |
 | `scripts/patch_touch.py` | Corrige somente clique e movimento relativo no formato Java do XSDL validado; gera outro arquivo |
+| `scripts/launch_KlipperScreen-autoconnect.sh` | Launcher atual com espera por Android/X11 e consultas com timeout |
+| `scripts/tablet-usb-watchdog.sh` | Supervisor de recuperação do painel, iniciado pelo systemd |
+| `scripts/tablet-usb-common.sh` | Funções ADB/X11 compartilhadas, selecionando somente o tablet |
+| `scripts/backup_btt_full.sh` | Backup de arquivos e estruturas de boot; específico dos discos/UUIDs documentados |
 | `config/70-btt-tablet-adb.rules` | Permissão USB exclusiva para o VID/PID observado |
 | `checksums.sha256` | Hashes observados dos downloads oficiais |
 
-Não há instalador automático: a execução por etapas permite conferir cada resultado. Não foram incluídos senhas, tokens, APKs, backups completos do Android ou configurações da impressora. Os binários devem ser obtidos das fontes oficiais.
+Não há instalador único: a execução por etapas permite conferir cada resultado. Depois da configuração, o supervisor recupera automaticamente o painel. Não foram incluídos senhas, tokens, APKs, backups do sistema ou configurações da impressora. Os binários devem ser obtidos das fontes oficiais.
 
 ## Resultado e limites
 
@@ -53,8 +58,10 @@ Não há instalador automático: a execução por etapas permite conferir cada r
 - Toque direto confirmado pelo usuário; descanso do X11 desativado durante a sessão.
 - Webcam Microsoft e pendrive de backup permaneceram intactos.
 - Nenhum movimento de eixo, extrusão ou aquecimento foi acionado pelo agente.
-- Reconexão do cabo, reinicialização completa e teste prolongado ainda não validados.
-- O launcher inicia a atividade Android quando o serviço sobe; não foi criado watchdog nem automação adicional.
+- Reboots reais do tablet e do BTT testados: interface recuperada automaticamente. [Veja o procedimento e os limites](docs/BACKUP_E_RECONEXAO.md).
+- Supervisor habilitado no boot, com recuperação de ADB/XSDL e reconexão do KlipperScreen.
+- Backup prévio de 2,9 GiB no pendrive, com leitura integral do arquivo e hashes verificados.
+- Desconexão física do cabo e teste prolongado ainda não validados. Falhas de alimentação ou depuração USB desativada exigem intervenção.
 
 ## Créditos
 

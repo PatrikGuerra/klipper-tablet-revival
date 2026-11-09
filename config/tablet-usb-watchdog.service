@@ -1,0 +1,14 @@
+[Unit]
+Description=Recuperacao do tablet USB XSDL para KlipperScreen
+After=systemd-udevd.service KlipperScreen.service
+Wants=KlipperScreen.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/tablet-usb-watchdog.sh
+Restart=always
+RestartSec=5
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

@@ -2,6 +2,10 @@
 *.tgz
 *.tar
 *.tar.gz
+*.img
+*.img.gz
+*.part-*
+boot-prefix.bin
 *.cfg
 *.xml
 *.log

@@ -1,5 +1,7 @@
 # Diagnóstico e rollback
 
+Atualização: o sistema agora tem [backup completo e supervisor de reconexão](BACKUP_E_RECONEXAO.md). Os comandos abaixo também descrevem a fase inicial da instalação. Para reverter o painel, pare primeiro o supervisor, evitando que ele reabra o aplicativo enquanto você trabalha.
+
 ## Verificações rápidas
 
 ```sh
@@ -33,6 +35,7 @@ Não foram alterados Klipper, Moonraker, a unidade systemd do KlipperScreen, web
 O launcher personalizado não existia antes. Para desativá-lo sem apagar:
 
 ```sh
+sudo systemctl disable --now tablet-usb-watchdog
 sudo systemctl stop KlipperScreen
 mv ~/KlipperScreen/scripts/launch_KlipperScreen.sh ~/tablet-xsdl/launch_KlipperScreen.desativado.sh
 sudo systemctl start KlipperScreen
@@ -54,9 +57,7 @@ Não restaure um TAR completo sobre o aplicativo em execução. Examine seu cont
 ## Próximos testes opcionais
 
 1. Confirmar imagem/toque com Wi-Fi do tablet desligado.
-2. Desconectar/reconectar somente o tablet e observar recuperação.
-3. Reiniciar o BTT e depois o tablet, separadamente.
-4. Medir memória/CPU por horas antes de considerar painel definitivo.
-5. Só então acrescentar watchdog ou automação de recuperação, com backup e teste próprio.
+2. Desconectar/reconectar fisicamente somente o tablet e observar recuperação.
+3. Medir memória/CPU por horas antes de considerar painel definitivo.
 
-Esses itens são pendências, não resultados já obtidos.
+Esses itens são pendências. Reboots separados do BTT e tablet, recuperação do XSDL e supervisão via systemd já foram implementados/testados; veja o registro da nova etapa.

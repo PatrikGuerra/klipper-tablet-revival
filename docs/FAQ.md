@@ -82,7 +82,19 @@ Não desenvolvemos APK nem instalamos DroidKlipp. O tablet já fornecia shell AD
 
 ## Funciona sozinho depois de ligar ou reconectar?
 
-O launcher tenta abrir o XSDL quando KlipperScreen inicia. Ainda não testamos reboot completo nem recuperação após tirar o cabo. Não foi criado watchdog. Esses testes são próximos passos, não uma promessa de funcionamento automático já comprovado.
+Agora há um supervisor habilitado no boot. Fizemos reboots reais do tablet e do BTT e a interface voltou automaticamente, sem reabrir o aplicativo manualmente. Ele aguarda o Android terminar de iniciar, recupera o encaminhamento USB/XSDL e reinicia somente KlipperScreen. O teste físico de retirar/recolocar o cabo continua pendente. Veja [backup, instalação e resultados da supervisão](BACKUP_E_RECONEXAO.md).
+
+## O backup foi feito antes de configurar essa automação?
+
+Sim. Foi criado um novo backup de arquivos persistentes, partição de boot e prefixo de bootloader no pendrive existente, preservando os backups anteriores. Ele tem cerca de 2,9 GiB, dividido para FAT32, com hashes e leitura integral verificados. Não é uma imagem bruta única do cartão; os detalhes e a recuperação estão em [BACKUP_E_RECONEXAO.md](BACKUP_E_RECONEXAO.md).
+
+## O supervisor pode reiniciar minha impressora se o tablet cair?
+
+Ele não reinicia BTT, Klipper ou Moonraker. Recupera apenas XSDL e KlipperScreen. Os reboots do BTT e tablet foram testes explícitos de instalação com a impressora ociosa, não ações automáticas do supervisor.
+
+## A reconexão é garantida em qualquer situação?
+
+Os reboots documentados passaram no hardware testado. O supervisor não conserta cabo defeituoso, falta de alimentação, autorização ADB revogada, PIN de bloqueio ou depuração USB desativada. A recuperação depende desses pré-requisitos; não há um prazo universal de segundos. Um Android lento pode levar mais tempo para completar o boot e desenhar a interface.
 
 ## Outra IA consegue fazer isso seguindo o repositório?
 
