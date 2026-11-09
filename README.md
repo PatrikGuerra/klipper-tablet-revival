@@ -1,6 +1,6 @@
 # Klipper Tablet Revival
 
-> **Android 4.2.2: antigo para os apps de hoje, pronto para o KlipperScreen.**
+> **KlipperScreen em um tablet Android 4.2.2, conectado por USB.**
 
 Um tablet Android antigo, recuperado como painel touchscreen do KlipperScreen por **USB**.
 
