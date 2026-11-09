@@ -1,5 +1,11 @@
 # Referências e procedência
 
+## Créditos aos projetos
+
+Créditos aos mantenedores e colaboradores de [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen), [SDL Android / XServer XSDL](https://github.com/pelya/commandergenius), [Klipper](https://github.com/Klipper3d/klipper), [Moonraker](https://github.com/Arksine/moonraker) e [Android Platform Tools / ADB](https://developer.android.com/tools/adb). A solução reúne essas peças; não substitui a autoria, o suporte ou as licenças dos projetos originais. O README explica o papel de cada um.
+
+O [DroidKlipp](https://github.com/CodeMasterCody3D/DroidKlipp) também apareceu como referência no planejamento inicial, mas seus scripts não foram usados nesta instalação. Esse crédito de referência não significa que ele seja uma dependência ou que seu instalador tenha sido validado aqui.
+
 ## Fontes primárias usadas
 
 - [KlipperScreen: Android / XServer XSDL / ADB](https://klipperscreen.readthedocs.io/en/latest/Android/) — cópia do launcher de exemplo, início do serviço, orientação de mouse e observação de usar 1.11.40 no Android 4. Página consultada em 09/11/2026.

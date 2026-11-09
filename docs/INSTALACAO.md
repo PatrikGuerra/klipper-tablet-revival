@@ -1,5 +1,7 @@
 # Reprodução passo a passo
 
+Se esta é sua primeira leitura, siga primeiro o [guia acompanhado](COMECE_AQUI.md), que indica onde executar cada comando e o resultado esperado. Este documento guarda os detalhes técnicos e os reparos específicos. Consulte também a [FAQ](FAQ.md) e a [ficha do tablet validado](TABLET_TESTADO.md).
+
 Este guia separa o caminho recomendado para uma instalação nova dos reparos que foram necessários na sessão real. Ajuste serial, usuário e caminhos ao seu equipamento. Execute os comandos Linux no BTT Pi por SSH.
 
 ## 1. Diagnóstico inicial

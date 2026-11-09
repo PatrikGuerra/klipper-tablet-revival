@@ -1,5 +1,7 @@
 # BTT Pi + tablet Android 4.2.2 como tela touchscreen do Klipper via USB
 
+> Arquivo histórico de planejamento. Para reproduzir o resultado já testado, comece por [COMECE_AQUI.md](COMECE_AQUI.md). As hipóteses e o status abaixo foram escritos antes da implementação; não representam todas as conclusões posteriores.
+
 > Documento de referência e roteiro de implementação — 09/11/2026
 > **Status:** solução tecnicamente plausível e documentada; **ainda não testada neste BTT Pi e neste tablet**.
 

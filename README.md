@@ -21,6 +21,10 @@ SSH é usado para administração. O transporte da interface entre o BTT Pi e o 
 
 ## Documentação
 
+- **Comece aqui:** [guia acompanhado, com comandos e resultados esperados](docs/COMECE_AQUI.md).
+- [Tablet testado e compatibilidade](docs/TABLET_TESTADO.md)
+- [FAQ: problemas encontrados e soluções](docs/FAQ.md)
+- [Como continuar com a ajuda de uma IA](docs/CONTINUAR_COM_IA.md)
 - [Instalação e reprodução passo a passo](docs/INSTALACAO.md)
 - [Histórico real, versões e evidências](docs/HISTORICO.md)
 - [Touch: diagnóstico e correção](docs/TOUCH.md)
@@ -50,12 +54,24 @@ Não há instalador automático: a execução por etapas permite conferir cada r
 - Reconexão do cabo, reinicialização completa e teste prolongado ainda não validados.
 - O launcher inicia a atividade Android quando o serviço sobe; não foi criado watchdog nem automação adicional.
 
-## Nomes considerados
+## Créditos
 
-1. `klipper-tablet-revival` — escolhido pelo usuário.
-2. `klipper-tablet-bridge`
-3. `klipper-usb-panel`
-4. `klipper-touch-link`
-5. `klipper-pocket-screen`
+Este resultado só foi possível pelo trabalho dos projetos abaixo:
+
+| Projeto | Contribuição para esta solução |
+|---|---|
+| [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen) | Interface e exemplo oficial de launcher Android/ADB que adaptamos |
+| [SDL Android / XServer XSDL, de pelya e colaboradores](https://github.com/pelya/commandergenius) | Servidor gráfico Android e código usado para entender o toque e os downloads |
+| [Klipper](https://github.com/Klipper3d/klipper) | Firmware/ecossistema da impressora controlada |
+| [Moonraker](https://github.com/Arksine/moonraker) | API que conecta o KlipperScreen à impressora |
+| [Android Platform Tools / ADB](https://developer.android.com/tools/adb) | Comunicação USB e encaminhamento das conexões X11 |
+
+Obrigado aos mantenedores e colaboradores desses projetos. Nossa contribuição aqui é registrar a integração, os ajustes e as evidências deste hardware. Os projetos originais mantêm seus direitos e licenças.
+
+## Para quem quer reproduzir
+
+Você pode seguir o guia manualmente ou entregá-lo a uma IA com ferramentas de terminal, acesso SSH autorizado ao BTT e acesso ADB ao tablet. [O roteiro para IA](docs/CONTINUAR_COM_IA.md) explica o contexto e os pontos de verificação. A IA precisa conferir as respostas do seu equipamento; ter o guia não garante compatibilidade com todo tablet.
+
+Tópicos do repositório ajudam a organizar o projeto. Enquanto ele permanecer privado, somente quem tiver acesso poderá encontrá-lo e ler seu conteúdo.
 
 Scripts baseados em projetos externos mantêm a procedência indicada em [Referências](docs/REFERENCIAS.md). Este repositório documenta uma instalação específica; não reivindica autoria do KlipperScreen ou XServer XSDL.
