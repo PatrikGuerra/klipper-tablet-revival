@@ -29,7 +29,7 @@ Os arquivos `.cfg` reais não foram publicados. O teste foi executado no BTT usa
 
 ## O que esta validação não cobre
 
-O guia inteiro não foi repetido do zero: isso exigiria outro tablet ou reinstalação. O script de diagnóstico teve sua sintaxe conferida; seus comandos correspondem às inspeções usadas na sessão, mas não foi executado integralmente como um novo teste. Na etapa inicial não houve reboot; a etapa posterior de [backup e supervisão](BACKUP_E_RECONEXAO.md) executou os reboots reais e registra seus resultados. Teste prolongado e retirada física do cabo continuam pendentes. As diferenças entre o roteiro ideal e a recuperação real estão registradas em HISTORICO.md.
+O guia inteiro não foi repetido do zero: isso exigiria outro tablet ou reinstalação. O script de diagnóstico teve sua sintaxe conferida; seus comandos correspondem às inspeções usadas na sessão, mas não foi executado integralmente como um novo teste. Na etapa inicial não houve reboot; a etapa posterior de [supervisão da reconexão](RECONEXAO.md) executou os reboots reais e registra seus resultados. Teste prolongado e retirada física do cabo continuam pendentes. As diferenças entre o roteiro ideal e a recuperação real estão registradas em HISTORICO.md.
 
 ## Verificação final da automação
 
@@ -41,4 +41,4 @@ Depois dos testes reais, os hashes SHA-256 dos três scripts instalados foram co
 | `tablet-usb-watchdog.sh` | `1fa394dee5a8abfa79ce94a84be670f3f57a786f3c6d2e9b5a22a4e739c6e30d` |
 | `launch_KlipperScreen-autoconnect.sh` | `933e9b93bbf53d11197befc47f657df4e3c42993e4ca72adc5d4fe2679e76c7d` |
 
-Supervisor e KlipperScreen estavam habilitados no boot; supervisor, KlipperScreen, Klipper e Moonraker estavam ativos. A janela em foco no Android era `x.org.server/.MainActivity`, e a captura final mostrou a interface conectada à impressora. O backup foi aberto novamente em modo somente leitura após o reboot, conferido e desmontado: resultado `exit=0`, os quatro hashes com `OK`.
+Supervisor e KlipperScreen estavam habilitados no boot; supervisor, KlipperScreen, Klipper e Moonraker estavam ativos. A janela em foco no Android era `x.org.server/.MainActivity`, e a captura final mostrou a interface conectada à impressora.

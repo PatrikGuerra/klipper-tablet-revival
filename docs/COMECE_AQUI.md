@@ -202,4 +202,4 @@ xset -display :100 -q
 
 **Confira:** encaminhamento `tcp:6100 tcp:6000`; descanso X11 com `timeout: 0`. O XSDL testado informa que não suporta DPMS.
 
-Pronto: você reproduziu as verificações principais! Registre modelo, versão e resultado. Para recuperar o painel automaticamente após reboot, siga a etapa adicional de [backup e supervisão](BACKUP_E_RECONEXAO.md), testada no BTT e tablet deste projeto. Teste prolongado e reconexão física do cabo continuam pendentes. Se precisar desfazer, consulte [MANUTENCAO.md](MANUTENCAO.md).
+Pronto: você reproduziu as verificações principais! Registre modelo, versão e resultado. Para recuperar o painel automaticamente após reboot, siga a etapa adicional de [supervisão da reconexão](RECONEXAO.md), testada no BTT e tablet deste projeto. Teste prolongado e reconexão física do cabo continuam pendentes. Se precisar desfazer, consulte [MANUTENCAO.md](MANUTENCAO.md).

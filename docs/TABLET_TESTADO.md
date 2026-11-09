@@ -33,7 +33,7 @@ BTT Pi/CB1, imagem BTT-CB1 2.3.4, Debian 11 Bullseye ARM64, cerca de 1 GB de RAM
 4. KlipperScreen mostrou menus e temperaturas recebidas do Moonraker.
 5. Depois de desativar o modo touchpad, o usuário confirmou o toque correto.
 
-Atualização: foram executados reboots reais do tablet e do BTT, com recuperação automática da interface após instalar o supervisor. Veja [backup e reconexão](BACKUP_E_RECONEXAO.md). Ainda não foram comprovados: retirada física/reconexão do cabo, funcionamento por muitas horas ou teste com Wi-Fi desligado. A conexão gráfica configurada usa USB, mesmo que o Android também esteja no Wi-Fi.
+Atualização: foram executados reboots reais do tablet e do BTT, com recuperação automática da interface após instalar o supervisor. Veja [reconexão automática](RECONEXAO.md). Ainda não foram comprovados: retirada física/reconexão do cabo, funcionamento por muitas horas ou teste com Wi-Fi desligado. A conexão gráfica configurada usa USB, mesmo que o Android também esteja no Wi-Fi.
 
 ## Como comparar com o seu tablet
 

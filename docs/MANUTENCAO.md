@@ -1,6 +1,6 @@
 # Diagnóstico e rollback
 
-Atualização: o sistema agora tem [backup completo e supervisor de reconexão](BACKUP_E_RECONEXAO.md). Os comandos abaixo também descrevem a fase inicial da instalação. Para reverter o painel, pare primeiro o supervisor, evitando que ele reabra o aplicativo enquanto você trabalha.
+Atualização: o sistema agora tem [supervisor de reconexão](RECONEXAO.md). Os comandos abaixo também descrevem a fase inicial da instalação. Para reverter o painel, pare primeiro o supervisor, evitando que ele reabra o aplicativo enquanto você trabalha.
 
 ## Verificações rápidas
 

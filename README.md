@@ -33,8 +33,7 @@ SSH é usado para administração. O transporte da interface entre o BTT Pi e o 
 - [Diagnóstico, manutenção e rollback](docs/MANUTENCAO.md)
 - [Referências e procedência dos arquivos](docs/REFERENCIAS.md)
 - [Validação dos scripts e evidências](docs/VALIDACAO.md)
-- [Backup completo e reconexão automática testada](docs/BACKUP_E_RECONEXAO.md)
-- [Backup com um comando, sem precisar de uma IA](docs/BACKUP_RAPIDO.md)
+- [Reconexão automática testada](docs/RECONEXAO.md)
 - [Roteiro original de planejamento](docs/REFERENCIA_ORIGINAL.md)
 
 ## Arquivos executáveis e configuração
@@ -47,7 +46,6 @@ SSH é usado para administração. O transporte da interface entre o BTT Pi e o 
 | `scripts/launch_KlipperScreen-autoconnect.sh` | Launcher atual com espera por Android/X11 e consultas com timeout |
 | `scripts/tablet-usb-watchdog.sh` | Supervisor de recuperação do painel, iniciado pelo systemd |
 | `scripts/tablet-usb-common.sh` | Funções ADB/X11 compartilhadas, selecionando somente o tablet |
-| `scripts/backup_btt_full.sh` | Comando reutilizável `btt-backup`: monta USB, verifica, captura e valida; cadastrado para este BTT |
 | `config/70-btt-tablet-adb.rules` | Permissão USB exclusiva para o VID/PID observado |
 | `checksums.sha256` | Hashes observados dos downloads oficiais |
 
@@ -57,11 +55,10 @@ Não há instalador único: a execução por etapas permite conferir cada result
 
 - ADB autorizado, XSDL respondendo via USB, KlipperScreen conectado ao Moonraker.
 - Toque direto confirmado pelo usuário; descanso do X11 desativado durante a sessão.
-- Webcam Microsoft e pendrive de backup permaneceram intactos.
+- Webcam Microsoft permaneceu intacta.
 - Nenhum movimento de eixo, extrusão ou aquecimento foi acionado pelo agente.
-- Reboots reais do tablet e do BTT testados: interface recuperada automaticamente. [Veja o procedimento e os limites](docs/BACKUP_E_RECONEXAO.md).
+- Reboots reais do tablet e do BTT testados: interface recuperada automaticamente. [Veja o procedimento e os limites](docs/RECONEXAO.md).
 - Supervisor habilitado no boot, com recuperação de ADB/XSDL e reconexão do KlipperScreen.
-- Backup prévio de 2,9 GiB no pendrive, com leitura integral do arquivo e hashes verificados.
 - Desconexão física do cabo e teste prolongado ainda não validados. Falhas de alimentação ou depuração USB desativada exigem intervenção.
 
 ## Créditos

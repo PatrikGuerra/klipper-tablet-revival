@@ -44,6 +44,6 @@ Data: 09/11/2026, fuso America/Sao_Paulo. Este registro distingue resultados obs
 
 Na conclusão da primeira etapa, o painel funcionava e o toque havia sido confirmado fisicamente pelo usuário. Não houve teste de isolamento desligando Wi-Fi, mas a conexão X11 configurada usa o encaminhamento ADB USB, não o IP do tablet. Naquele momento, reinício completo, reconexão USB e monitoramento prolongado não haviam sido testados e não havia watchdog.
 
-Na etapa posterior, ainda em 09/11/2026, foi feito backup completo no pendrive antes de instalar um supervisor. Foram testados reboots separados do BTT e tablet, recuperação do aplicativo e manutenção do painel em primeiro plano. Veja [BACKUP_E_RECONEXAO.md](BACKUP_E_RECONEXAO.md) para os resultados atuais. Não foi usado DroidKlipp, APK customizado nem modificação de alimentação.
+Na etapa posterior, ainda em 09/11/2026, foi instalado um supervisor de reconexão. Foram testados reboots separados do BTT e tablet, recuperação do aplicativo e manutenção do painel em primeiro plano. Veja [RECONEXAO.md](RECONEXAO.md) para os resultados atuais. Não foi usado DroidKlipp, APK customizado nem modificação de alimentação.
 
 A captura em `images/klipperscreen-usb.png` é anterior à correção do touch; comprova a imagem, enquanto a confirmação posterior do usuário comprova a experiência de toque.

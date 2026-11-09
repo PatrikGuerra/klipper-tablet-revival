@@ -82,11 +82,7 @@ Não desenvolvemos APK nem instalamos DroidKlipp. O tablet já fornecia shell AD
 
 ## Funciona sozinho depois de ligar ou reconectar?
 
-Agora há um supervisor habilitado no boot. Fizemos reboots reais do tablet e do BTT e a interface voltou automaticamente, sem reabrir o aplicativo manualmente. Ele aguarda o Android terminar de iniciar, recupera o encaminhamento USB/XSDL e reinicia somente KlipperScreen. O teste físico de retirar/recolocar o cabo continua pendente. Veja [backup, instalação e resultados da supervisão](BACKUP_E_RECONEXAO.md).
-
-## O backup foi feito antes de configurar essa automação?
-
-Sim. Foi criado um novo backup de arquivos persistentes, partição de boot e prefixo de bootloader no pendrive existente, preservando os backups anteriores. Ele tem cerca de 2,9 GiB, dividido para FAT32, com hashes e leitura integral verificados. Não é uma imagem bruta única do cartão; os detalhes e a recuperação estão em [BACKUP_E_RECONEXAO.md](BACKUP_E_RECONEXAO.md).
+Agora há um supervisor habilitado no boot. Fizemos reboots reais do tablet e do BTT e a interface voltou automaticamente, sem reabrir o aplicativo manualmente. Ele aguarda o Android terminar de iniciar, recupera o encaminhamento USB/XSDL e reinicia somente KlipperScreen. O teste físico de retirar/recolocar o cabo continua pendente. Veja [instalação e resultados da supervisão](RECONEXAO.md).
 
 ## O supervisor pode reiniciar minha impressora se o tablet cair?
 

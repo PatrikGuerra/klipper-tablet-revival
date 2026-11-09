@@ -1,69 +1,6 @@
-# Backup anterior e recuperação automática do painel
+# Reconexão automática do painel
 
-Esta etapa acrescenta supervisão ao painel sem reiniciar Klipper/Moonraker quando o tablet fica indisponível. Backup concluído e validado em 09/11/2026, antes da ativação. O reboot do BTT e o reboot do tablet foram executados e a imagem retornou automaticamente; veja os resultados abaixo.
-
-## Backup antes de alterar a configuração
-
-**Para os próximos backups:** use o [comando reutilizável `btt-backup`](BACKUP_RAPIDO.md). O registro abaixo descreve a primeira captura; o script foi depois ampliado para gerar pastas novas, montar o USB automaticamente e parar também o supervisor do tablet.
-
-Destino identificado: pendrive Kingston USB, partição FAT32, UUID `05B1-3EBC`, montado em `/mnt/btt-backup-usb`. Backups anteriores foram preservados. Não houve formatação.
-
-A pasta deste trabalho é `BTT-backup-2026-11-09-before-autoconnect`. O script `scripts/backup_btt_full.sh` é específico do disco/UUID deste BTT e recusa outra origem/destino. Não copie seus identificadores para outro computador sem conferir os discos.
-
-Conteúdo do backup concluído:
-
-- `root.tar.gz.part-*`: todos os arquivos persistentes do sistema raiz, com proprietários numéricos, ACLs, atributos estendidos e arquivos esparsos.
-- `boot-partition.img.gz`: imagem da partição de boot inteira.
-- `boot-prefix.bin`: primeiros 4 MiB do cartão, incluindo tabela inicial e região de bootloader.
-- Tabela de partições em texto e JSON, lista de pacotes, discos e montagens.
-- Inventário do arquivo, hashes SHA-256, resultado das verificações e logs.
-
-O sistema tem cerca de 58 GiB, mas usa cerca de 6 GiB. O backup de arquivos compactado cabe no pendrive de 29 GiB. As partes têm 1900 MiB para respeitar FAT32.
-
-Este é um **backup recuperável dos arquivos e estruturas de boot**, não uma imagem bruta única do cartão inteiro. A raiz continua montada durante a cópia. Klipper, Moonraker e KlipperScreen são parados durante a captura para preservar seus dados; serviços básicos do Linux continuam ativos. Alterações de arquivos do sistema durante a cópia são registradas e precisam ser revisadas. Não há promessa de snapshot atômico de todos os serviços ou de restauração já testada em outro cartão.
-
-Não são arquivados sistemas virtuais `/dev`, `/proc`, `/sys`, `/run`, arquivos temporários de `/tmp`, pontos externos em `/mnt` e `/media` ou `lost+found`. O pendrive não é incluído dentro do próprio backup. A partição `/boot` é capturada separadamente.
-
-### Conferir a integridade
-
-Com o pendrive montado, entre na pasta do backup:
-
-```sh
-cat RESULT.txt
-cat root-pipeline-status.txt
-cat root-tar.log
-sha256sum -c SHA256SUMS
-gzip -t boot-partition.img.gz
-cat root.tar.gz.part-* | gzip -t
-cat root.tar.gz.part-* | tar -tzf - > /tmp/root-inventory-verificado.txt
-```
-
-Os hashes e testes gzip precisam passar. Leia os avisos do tar: arquivos alterados em logs ativos são diferentes de erros de leitura de configuração ou dados. `exit=0` sozinho não substitui a leitura dos registros.
-
-### Como recuperar, em caso de necessidade
-
-A recuperação é feita **em outro Linux, com o BTT desligado e o cartão de destino claramente identificado**. Não execute comandos de gravação contra o BTT em uso.
-
-1. Confira os hashes das partes.
-2. Use cartão com capacidade suficiente para o layout registrado em `partition-table.sfdisk`; não basta comparar o nome comercial “64 GB”.
-3. Recrie o prefixo de boot/tabela e o layout no cartão correto. Isso apaga o destino: revise o nome do dispositivo antes de gravar.
-4. Recrie o ext4 da raiz com o UUID registrado em `disks.txt` e restaure a imagem da partição boot. Preserve os UUIDs esperados pelo sistema ou revise `fstab`/configuração de boot.
-5. Monte a raiz de destino e extraia a concatenação das partes como root, usando GNU tar com `--numeric-owner --acls --xattrs`.
-6. Recrie os diretórios excluídos: `/dev`, `/proc`, `/sys`, `/run`, `/mnt`, `/media`, `/tmp` (modo 1777). Monte o boot no lugar correto.
-7. Sincronize, desmonte e teste a inicialização no BTT. Uma verificação de arquivo não equivale a esse teste de restauração.
-
-O backup contém dados privados do sistema, possivelmente chaves e credenciais. Ele permanece no pendrive; não deve ser enviado ao repositório, mesmo se este estiver privado.
-
-### Resultado da captura
-
-- Início: 09/11/2026, 16:02:08; fim da validação: 16:33:08 (UTC−03).
-- Tamanho aproximado: **2,9 GiB**, com duas partes do sistema raiz.
-- Pipeline tar/gzip/split: `0 0 0`; resultado final `exit=0`.
-- Inventário lido: **120.222 entradas**.
-- Testes gzip e leitura integral do tar concluídos sem erro.
-- SHA-256: `boot-prefix.bin`, `boot-partition.img.gz`, `root.tar.gz.part-000` e `root.tar.gz.part-001`: **todos OK**.
-- Únicos avisos: sockets temporários `klippy.sock` e `moonraker.sock` ignorados; os serviços os recriam.
-- Serviços da impressora religados após a captura. Pendrive sincronizado e desmontado antes do reboot do BTT.
+Esta etapa mantém o tablet conectado ao KlipperScreen após reiniciar o Android ou o BTT. O supervisor recupera somente o painel; não reinicia Klipper ou Moonraker.
 
 ## Componentes da reconexão
 
@@ -113,7 +50,7 @@ No reboot do BTT iniciado às 16:37:03, o supervisor registrou reconexão X11 à
 
 Os scripts foram refinados durante os testes para tolerar o primeiro desenho lento e assegurar primeiro plano. O BTT foi reiniciado após ativar a unidade; refinamentos posteriores mantêm a mesma unidade habilitada e o mesmo launcher, alterando apenas a supervisão.
 
-Não foi executado um teste de restauração do backup em outro cartão, nem uma retirada física do cabo. O fato de esses cenários não terem sido testados não é escondido pela recuperação bem-sucedida dos reboots.
+A retirada física do cabo ainda não foi testada; os cenários de reboot e recuperação do aplicativo foram verificados no hardware descrito.
 
 ### Verificar e desativar
 
@@ -128,7 +65,7 @@ Para reverter, desative o supervisor com `sudo systemctl disable --now tablet-us
 
 ## Instalação explícita dos componentes
 
-Execute no BTT, a partir da raiz deste repositório, **depois de verificar o backup**. Os nomes de usuário, serial e caminhos são deste equipamento. Adapte `tablet-usb-common.sh` para outro ambiente. O serviço anterior do KlipperScreen precisa estar habilitado e definir `KS_XCLIENT`.
+Execute no BTT, a partir da raiz deste repositório, Os nomes de usuário, serial e caminhos são deste equipamento. Adapte `tablet-usb-common.sh` para outro ambiente. O serviço anterior do KlipperScreen precisa estar habilitado e definir `KS_XCLIENT`.
 
 ```sh
 mkdir -p ~/tablet-xsdl/autoconnect-before-20261109
@@ -146,7 +83,7 @@ sudo systemctl enable --now tablet-usb-watchdog
 sudo systemctl restart KlipperScreen
 ```
 
-Não substitua arquivos existentes sem preservar suas cópias; o diretório de backup acima deve ser novo em outra execução. As cópias usadas nesta sessão foram preparadas em `/tmp` para não alterar a configuração antes do backup.
+Preserve uma cópia dos arquivos atuais antes de substituí-los; use um diretório novo para essa cópia em cada execução.
 
 ### Como testar a recuperação
 
