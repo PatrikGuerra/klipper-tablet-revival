@@ -1,5 +1,7 @@
 # Klipper Tablet Revival
 
+> **Seu tablet antigo ainda tem muito para imprimir.**
+
 Um tablet Android antigo, recuperado como painel touchscreen do KlipperScreen por **USB**.
 
 Validado em 09/11/2026: BTT Pi/CB1 com Debian 11 ARM64 e tablet **NT-1710, Android 4.2.2, ARMv7**. A interface apareceu no tablet e o usuário confirmou que o toque ficou correto após desativar a emulação de touchpad.
