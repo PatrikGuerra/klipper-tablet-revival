@@ -34,6 +34,7 @@ SSH é usado para administração. O transporte da interface entre o BTT Pi e o 
 - [Referências e procedência dos arquivos](docs/REFERENCIAS.md)
 - [Validação dos scripts e evidências](docs/VALIDACAO.md)
 - [Backup completo e reconexão automática testada](docs/BACKUP_E_RECONEXAO.md)
+- [Backup com um comando, sem precisar de uma IA](docs/BACKUP_RAPIDO.md)
 - [Roteiro original de planejamento](docs/REFERENCIA_ORIGINAL.md)
 
 ## Arquivos executáveis e configuração
@@ -46,7 +47,7 @@ SSH é usado para administração. O transporte da interface entre o BTT Pi e o 
 | `scripts/launch_KlipperScreen-autoconnect.sh` | Launcher atual com espera por Android/X11 e consultas com timeout |
 | `scripts/tablet-usb-watchdog.sh` | Supervisor de recuperação do painel, iniciado pelo systemd |
 | `scripts/tablet-usb-common.sh` | Funções ADB/X11 compartilhadas, selecionando somente o tablet |
-| `scripts/backup_btt_full.sh` | Backup de arquivos e estruturas de boot; específico dos discos/UUIDs documentados |
+| `scripts/backup_btt_full.sh` | Comando reutilizável `btt-backup`: monta USB, verifica, captura e valida; cadastrado para este BTT |
 | `config/70-btt-tablet-adb.rules` | Permissão USB exclusiva para o VID/PID observado |
 | `checksums.sha256` | Hashes observados dos downloads oficiais |
 

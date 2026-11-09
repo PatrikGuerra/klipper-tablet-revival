@@ -4,6 +4,8 @@ Esta etapa acrescenta supervisão ao painel sem reiniciar Klipper/Moonraker quan
 
 ## Backup antes de alterar a configuração
 
+**Para os próximos backups:** use o [comando reutilizável `btt-backup`](BACKUP_RAPIDO.md). O registro abaixo descreve a primeira captura; o script foi depois ampliado para gerar pastas novas, montar o USB automaticamente e parar também o supervisor do tablet.
+
 Destino identificado: pendrive Kingston USB, partição FAT32, UUID `05B1-3EBC`, montado em `/mnt/btt-backup-usb`. Backups anteriores foram preservados. Não houve formatação.
 
 A pasta deste trabalho é `BTT-backup-2026-11-09-before-autoconnect`. O script `scripts/backup_btt_full.sh` é específico do disco/UUID deste BTT e recusa outra origem/destino. Não copie seus identificadores para outro computador sem conferir os discos.
