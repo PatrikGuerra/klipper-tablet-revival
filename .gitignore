@@ -1,0 +1,15 @@
+*.apk
+*.tgz
+*.tar
+*.tar.gz
+*.cfg
+*.xml
+*.log
+.env
+.env.*
+__pycache__/
+backups/
+private/
+xsdl-screen.png
+xsdl-funcionando.png
+VALIDACAO_TABLET.md
