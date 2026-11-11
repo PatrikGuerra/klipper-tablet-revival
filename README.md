@@ -21,13 +21,13 @@ Klipper + Moonraker → KlipperScreen on the BTT Pi
 
 SSH is used for administration. The BTT Pi and tablet transport the interface through ADB/USB. This is not HDMI video or mirroring: the tablet renders X11 and KlipperScreen runs on the BTT Pi. The tablet was also connected to Wi-Fi; disabling Wi-Fi for an isolated test was not performed in this session.
 
-## Para reproduzir
+## Reproduce it
 
-1. Siga o [guia principal](docs/COMECE_AQUI.md) para chegar à primeira imagem e testar o toque.
-2. Se algo falhar, escolha o sintoma na [FAQ](docs/FAQ.md). Os [reparos avançados](docs/INSTALACAO.md) são apenas para erros específicos e alguns exigem root preexistente.
-3. Com a interface funcionando, instale a [reconexão automática](docs/RECONEXAO.md), se desejar.
+1. Follow the [main guide](docs/COMECE_AQUI.md) to display the interface and test touch.
+2. If something fails, find the symptom in the [FAQ](docs/FAQ.md). [Advanced repairs](docs/INSTALACAO.md) are for specific errors; some require pre-existing root access.
+3. Once the interface works, optionally install [automatic reconnection](docs/RECONEXAO.md).
 
-Referência: [tablet testado](docs/TABLET_TESTADO.md), [toque](docs/TOUCH.md), [diagnóstico e rollback](docs/MANUTENCAO.md), [evidências históricas](docs/HISTORICO.md), [validação](docs/VALIDACAO.md), [procedência](docs/REFERENCIAS.md) e [roteiro para IA](docs/CONTINUAR_COM_IA.md).
+Reference: [tested tablet](docs/TABLET_TESTADO.md), [touch](docs/TOUCH.md), [diagnosis and rollback](docs/MANUTENCAO.md), [implementation history](docs/HISTORICO.md), [validation](docs/VALIDACAO.md), [provenance](docs/REFERENCIAS.md), and [AI handoff](docs/CONTINUAR_COM_IA.md).
 
 ## Executable files and configuration
 
@@ -42,7 +42,7 @@ Referência: [tablet testado](docs/TABLET_TESTADO.md), [toque](docs/TOUCH.md), [
 | `config/70-btt-tablet-adb.rules` | USB permission limited to the observed VID/PID |
 | `checksums.sha256` | Observed hashes of official downloads |
 
-Não há instalador único: a execução por etapas permite conferir cada resultado. Os scripts **exigem configurar serial, usuário e diretório reais**; valores `<Device...>` são apenas marcadores e fazem os launchers falharem de forma explícita. Não foram incluídos senhas, tokens, APKs, backups do sistema ou configurações da impressora. Obtenha binários das fontes oficiais.
+There is no one-shot installer: each step has a result you can verify. The scripts **require the real serial, user and home directory**; `<Device...>` values are redacted markers and make launchers fail explicitly. Passwords, tokens, APKs, system backups and printer configuration are not included. Obtain binaries from official sources.
 
 ## Result and limits
 

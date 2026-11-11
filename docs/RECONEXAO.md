@@ -1,71 +1,27 @@
-# Reconexão automática do painel
+# Automatic panel reconnection
 
-Esta etapa mantém o tablet conectado ao KlipperScreen após reiniciar o Android ou o BTT. O supervisor recupera somente o painel; não reinicia Klipper ou Moonraker.
+This optional step restores the tablet panel after an Android or BTT reboot. The supervisor recovers **only the panel and KlipperScreen**, not Klipper, Moonraker or the BTT itself. Complete the [main guide](COMECE_AQUI.md) and confirm ADB/X11 before installing it.
 
-## Componentes da reconexão
+## How it works
 
-| Arquivo instalado | Função |
+| Installed file | Role |
 |---|---|
-| `/usr/local/lib/tablet-usb-common.sh` | Consultas ADB com timeout, seleção exclusiva do tablet, encaminhamento USB e teste X11 |
-| `<DeviceHome>/KlipperScreen/scripts/launch_KlipperScreen.sh` | Aguarda ADB/Android/XSDL e executa o cliente configurado pelo serviço original |
-| `/usr/local/bin/tablet-usb-watchdog.sh` | Verifica presença USB, fim do boot Android e resposta X11; recupera apenas o painel |
-| `/etc/systemd/system/tablet-usb-watchdog.service` | Inicia o supervisor junto com o Linux e o reinicia se o supervisor falhar |
+| `/usr/local/lib/tablet-usb-common.sh` | Timed ADB/X11 checks restricted to the selected tablet |
+| `~/KlipperScreen/scripts/launch_KlipperScreen.sh` | Waits for Android/XSDL and runs the client configured by the original unit |
+| `/usr/local/bin/tablet-usb-watchdog.sh` | Monitors USB, Android boot and X11; recovers the panel |
+| `/etc/systemd/system/tablet-usb-watchdog.service` | Starts and restarts the supervisor with Linux |
 
-O launcher novo está no repositório como `scripts/launch_KlipperScreen-autoconnect.sh`; o launcher inicial permanece documentado como referência.
+The repository's replacement launcher is `scripts/launch_KlipperScreen-autoconnect.sh`; the simpler initial launcher remains for the first setup. The supervisor runs as root to restart **only KlipperScreen**, but executes ADB/X11 as the configured BTT user through `setpriv`. It does not open network ADB, alter other USB device rules, or send G-code.
 
-O supervisor roda como root para reiniciar **somente KlipperScreen**, mas executa ADB/X11 com o usuário `<DeviceUser>` por `setpriv`. Não abre ADB pela rede, não altera regras da webcam e não envia G-code.
+When the tablet is absent or booting, the supervisor waits. Once ADB reports `sys.boot_completed=1`, it restores `tcp:6100 → tcp:6000`, brings XSDL to the foreground if needed, checks `xset`, and restarts KlipperScreen after X11 responds or the Android boot ID changes. Repeated XSDL failures reopen only the app, with at least 180 seconds between force-stop attempts. Checks have timeouts; a slow X11 query is confirmed before recovery and a restart allows 20 seconds for the first draw. The ten-second normal loop is **not** a guaranteed recovery deadline.
 
-### Recuperação
+With `TABLET_KEEP_FOREGROUND=1`, the tablet is a dedicated panel: if another Android app covers XSDL, the supervisor brings XSDL forward. This was added after a pre-existing VNC app appeared during testing; it was not removed or reconfigured. To use Android normally, stop the supervisor temporarily or set this value to `0` in the installed common script. On this Android, backgrounding SDL could also pause X11 responses, so foreground restoration occurs before declaring X11 failed.
 
-1. Tablet ausente: aguarda; não reinicia o BTT nem o firmware da impressora.
-2. Android iniciando: espera `sys.boot_completed=1`.
-3. Android disponível: restabelece `tcp:6100 → tcp:6000`, abre XSDL se necessário e verifica `xset`.
-4. X11 recuperado ou boot Android mudou: reinicia KlipperScreen para reconectar seu cliente ao servidor.
-5. XSDL falha sucessivamente: reabre somente o aplicativo, com intervalo mínimo de 180 segundos entre tentativas de reset.
+The supervisor may wake a sleeping screen and send MENU to dismiss a simple lockscreen. It cannot remove a PIN/password. Power loss, a bad cable, disabled USB debugging and revoked ADB authorization still require intervention.
 
-As consultas têm timeout. O intervalo normal de verificação é 10 segundos; chamadas e inicialização do aplicativo somam tempo. Não é uma garantia de recuperação em exatamente 10 segundos.
+## Install on the BTT
 
-Uma consulta X11 usa até 12 segundos. Uma falha isolada com o painel já conectado precisa de confirmação antes de disparar recuperação. Após reiniciar KlipperScreen, o supervisor dá 20 segundos para o primeiro desenho, mais pesado neste Android. Esse ajuste foi motivado por uma consulta lenta observada no teste inicial.
-
-O procedimento pode acender a tela quando `dumpsys power` confirma que ela está apagada e enviar MENU para dispensar uma tela simples. Não remove PIN/senha. Falta de alimentação, cabo defeituoso, depuração desativada ou autorização ADB revogada continuam exigindo intervenção.
-
-O modo dedicado (`TABLET_KEEP_FOREGROUND=1`) verifica a janela Android em foco e traz o XSDL para frente se outro aplicativo ocupar a tela. Isso foi acrescentado após encontrar a tela de um app VNC preexistente durante os testes. Ele não remove nem reconfigura o VNC. Para usar o Android normalmente, pare o supervisor temporariamente; alternativamente, ajuste a variável para 0 no arquivo comum. Sem essa opção, a conexão X11 pode funcionar enquanto outro app cobre a interface.
-
-Neste Android, colocar SDL em segundo plano também pode pausar as respostas X11. Por isso a verificação de primeiro plano vem **antes** do teste X11: o supervisor retoma o app e só depois decide se há uma falha gráfica. Evita reiniciar o cliente apenas porque a tela inicial cobriu o XSDL.
-
-## Testes reais de recuperação
-
-| Cenário | Evidência |
-|---|---|
-| Tablet reiniciado por ADB | `boot_id` Android mudou, ADB reapareceu, `sys.boot_completed=1`, XSDL abriu e KlipperScreen voltou sem ação na tela |
-| BTT reiniciado por `reboot` | `boot_id` Linux mudou; supervisor subiu automaticamente e a impressora foi inicializada pelo KlipperScreen |
-| XSDL encerrado com `am force-stop` | Aplicativo reaberto e cliente reconectado automaticamente |
-| Aplicativo fora de foco | Supervisor retoma XSDL como painel dedicado; teste com tecla HOME do Android |
-
-No reboot do BTT iniciado às 16:37:03, o supervisor registrou reconexão X11 às 16:37:23 e o KlipperScreen registrou a impressora inicializada às 16:37:43. No segundo reboot do tablet iniciado às 16:37:58, o Android terminou o boot e o supervisor registrou a reconexão às 16:39:24. São tempos observados, não um prazo máximo garantido.
-
-![Interface após o reboot do BTT](images/after-btt-reboot.png)
-
-![Interface após reboot do tablet e recuperação](images/after-tablet-reboot.png)
-
-Os scripts foram refinados durante os testes para tolerar o primeiro desenho lento e assegurar primeiro plano. O BTT foi reiniciado após ativar a unidade; refinamentos posteriores mantêm a mesma unidade habilitada e o mesmo launcher, alterando apenas a supervisão.
-
-A retirada física do cabo ainda não foi testada; os cenários de reboot e recuperação do aplicativo foram verificados no hardware descrito.
-
-### Verificar e desativar
-
-```sh
-systemctl status tablet-usb-watchdog --no-pager
-journalctl -u tablet-usb-watchdog -n 40 --no-pager
-adb devices -l
-timeout 8 xset -display :100 -q
-```
-
-Para reverter, desative o supervisor com `sudo systemctl disable --now tablet-usb-watchdog`, restaure o launcher salvo antes da alteração e reinicie somente KlipperScreen. Não é preciso restaurar todo o cartão para desfazer a automação.
-
-## Instalação explícita dos componentes
-
-Execute no BTT, a partir da raiz deste repositório. Primeiro conclua o [guia principal](COMECE_AQUI.md) e confirme ADB/X11. O serviço existente do KlipperScreen precisa definir `KS_XCLIENT`. Anote o serial mostrado por `adb devices -l`, o usuário de `id -un` e o diretório de `printf '%s\n' "$HOME"`.
+Run from the repository root. The existing KlipperScreen unit must be enabled and provide `KS_XCLIENT`. Note your `adb devices -l` serial, `id -un` username and `printf '%s\n' "$HOME"` path. Create a **new backup directory on every run**, preserving any existing launcher, common script, supervisor and unit:
 
 ```sh
 mkdir -p ~/tablet-xsdl
@@ -85,9 +41,9 @@ sudoedit /usr/local/lib/tablet-usb-common.sh
 sudo bash -c 'source /usr/local/lib/tablet-usb-common.sh; tablet_online'
 ```
 
-No `sudoedit`, substitua **somente nas três linhas de atribuição** os valores `<DeviceSerialNumber>`, `<DeviceUser>` e `<DeviceHome>` por serial, usuário e caminho reais, preservando as aspas. Não altere a condição de validação abaixo delas. Não continue se `tablet_online` falhar. O backup é único a cada execução; guarde o caminho exibido para eventual restauração.
+In `sudoedit`, replace the three redacted values `<DeviceSerialNumber>`, `<DeviceUser>` and `<DeviceHome>` **only in the assignment lines**, keeping the quotes. Leave the validation condition below them unchanged. Do not continue if `tablet_online` fails. Keep the displayed backup path for rollback.
 
-Depois da verificação:
+After validation:
 
 ```sh
 sudo install -m 0755 scripts/tablet-usb-watchdog.sh /usr/local/bin/tablet-usb-watchdog.sh
@@ -97,15 +53,30 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now tablet-usb-watchdog
 ```
 
-O supervisor reiniciará apenas KlipperScreen quando X11 estiver pronto.
+The supervisor restarts KlipperScreen only when X11 is ready. Verify:
 
-### Como testar a recuperação
+```sh
+systemctl status tablet-usb-watchdog --no-pager
+journalctl -u tablet-usb-watchdog -n 40 --no-pager
+adb devices -l
+timeout 8 xset -display :100 -q
+```
 
-Confirme antes que não há impressão em andamento. Faça um cenário por vez, aguardando a interface voltar e verificando o log do supervisor:
+To disable it, run `sudo systemctl disable --now tablet-usb-watchdog`, restore the saved launcher, then restart only KlipperScreen. See [rollback](MANUTENCAO.md).
 
-1. Reinicie somente o tablet por ADB, sem intervenção na tela, e aguarde.
-2. Confirme novo `boot_id` Android, `device`, resposta X11, processo KlipperScreen e captura da tela.
-3. Reinicie somente o BTT; o SSH vai cair e precisará reconectar. Confirme novo `boot_id` Linux e recuperação dos serviços.
-4. Encerre apenas o XSDL e confira se o supervisor o reabre e reconecta o cliente.
+## Observed recovery tests
 
-Esses testes comprovam os cenários executados, não falhas físicas de cabo/alimentação nem situações com autorização ADB revogada. Um teste de desconexão real do cabo requer acesso físico.
+| Scenario | Result |
+|---|---|
+| Tablet rebooted via ADB | Android `boot_id` changed; ADB returned, boot completed, XSDL opened and KlipperScreen returned without screen interaction |
+| BTT rebooted | Linux `boot_id` changed; supervisor started at boot and KlipperScreen initialized the printer |
+| XSDL force-stopped | The app reopened and its X11 client reconnected |
+| Another app in foreground | The supervisor restored XSDL as a dedicated panel after Android HOME |
+
+In one BTT reboot, started at 16:37:03, the supervisor logged X11 recovery at 16:37:23 and KlipperScreen logged printer initialization at 16:37:43. After a tablet reboot started at 16:37:58, the supervisor logged reconnection at 16:39:24. These are observations, **not** upper bounds. Later script refinements retained the same enabled unit and launcher, changing only supervision.
+
+![Interface after the BTT reboot](images/after-btt-reboot.png)
+
+![Interface after the tablet reboot](images/after-tablet-reboot.png)
+
+Before reproducing a reboot test, make sure no print is in progress. Test one scenario at a time, wait for the interface, and inspect the supervisor log and relevant boot ID. Physical cable removal/reconnection has **not** been tested; those results do not prove recovery from a bad cable, power loss or revoked authorization.

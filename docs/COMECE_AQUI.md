@@ -1,37 +1,30 @@
-# Comece aqui: do tablet conectado à interface funcionando
+# Start here: from connected tablet to working interface
 
-Bem-vindo! A ideia é simples: o BTT executa o KlipperScreen e o tablet desenha a interface e recebe seus toques. Este guia explica **onde executar**, **o que observar** e **quando seguir**. O [histórico](HISTORICO.md) registra os detalhes da instalação original; ele não precisa ser repetido inteiro em um equipamento novo.
+The BTT runs KlipperScreen; the Android tablet displays its X11 interface and receives touch input over USB. This is the **only normal installation path**. Use [advanced repairs](INSTALACAO.md) only for a matching error. The [implementation history](HISTORICO.md) records what happened on the original device; it is not a checklist for new installations.
 
-## Antes de começar
+## Before you begin
 
-Você precisa de:
+You need a BTT with Klipper, Moonraker and KlipperScreen already running. If KlipperScreen is missing, follow its [official installation guide](https://klipperscreen.readthedocs.io/en/latest/Installation/) first. You also need an Android tablet, a data-capable USB cable, SSH/sudo access to the BTT, and access to this repository (GitHub authorization may be required while it is private). Unlock the tablet when asked.
 
-- BTT com Klipper, Moonraker e KlipperScreen já funcionando. Se o último estiver ausente, faça primeiro a [instalação oficial](https://klipperscreen.readthedocs.io/en/latest/Installation/).
-- Tablet Android compatível e cabo USB que transmita dados.
-- Acesso SSH ao BTT, senha/sudo quando necessário e possibilidade de desbloquear o Android.
-- Acesso a este repositório. Ele é privado: o GitHub deve autorizar sua conta.
+`<DeviceUser>`, `<DeviceHostIp>` and `<DeviceSerialNumber>` are redacted values from the tested setup. Use **your** device's values. Keep the same SSH session through the steps below; if you reconnect, set `TABLET_SERIAL` again.
 
-Os valores `<DeviceUser>`, `<DeviceHostIp>` e `<DeviceSerialNumber>` representam dados removidos desta publicação. Use os valores do **seu** equipamento. Mantenha o mesmo terminal SSH durante as etapas; se reconectar, redefina `TABLET_SERIAL`.
-
-### Onde cada coisa acontece
-
-| Local | O que fazer |
+| Where | What happens |
 |---|---|
-| Seu computador | Abrir SSH para o BTT |
-| Terminal SSH do BTT | Instalar ADB, consultar USB, copiar arquivos, iniciar KlipperScreen |
-| Tela do tablet | Habilitar depuração, aceitar autorização e escolher o modo de toque |
+| Your computer | Open SSH to the BTT |
+| BTT SSH terminal | Inspect USB, install ADB/XSDL, configure the launcher |
+| Tablet screen | Enable debugging, authorize ADB, select direct touch |
 
-## 1. Acesse o BTT e obtenha o guia
+## 1. Check the BTT
 
-**No computador:**
+On your computer, set your SSH values before connecting:
 
 ```sh
-BTT_USER='seu-usuario'
-BTT_HOST='ip-do-btt'
+BTT_USER='your-user'
+BTT_HOST='btt-ip-address'
 ssh "$BTT_USER@$BTT_HOST"
 ```
 
-**Já dentro do BTT:**
+On the BTT:
 
 ```sh
 git clone https://github.com/PatrikGuerra/klipper-tablet-revival.git
@@ -41,50 +34,42 @@ systemctl is-active klipper moonraker KlipperScreen
 lsusb
 ```
 
-**Confira:** os três serviços devem aparecer como `active`, e `lsusb` deve identificar o Android. No hardware testado, o tablet é `18d1:0003`. Se não for esse VID/PID, não aplique a regra USB deste projeto sem adaptar. Não altere outros periféricos, discos ou webcam.
+All three services should be `active`; `lsusb` should show the tablet. The tested device was `18d1:0003`. If yours has another VID/PID, **do not install this repository's USB rule unchanged**. Leave unrelated USB devices alone. If the repository directory already exists, enter it and inspect `git status` instead of cloning over it. Do not save GitHub tokens in scripts or clone URLs.
 
-Se `git clone` pedir autenticação, use sua forma habitual de acesso ao GitHub. Não coloque tokens dentro de scripts ou URLs salvas. Se a pasta já existir, entre nela e confira `git status`; não clone por cima.
+## 2. Authorize ADB
 
-## 2. Ative a depuração USB no Android
-
-Na tela do tablet, procure **Configurações → Opções do desenvolvedor → Depuração USB**. Se as opções não aparecerem, a forma de habilitá-las depende do fabricante. Conecte o cabo ao BTT e deixe o tablet desbloqueado.
-
-**No BTT:**
+On the tablet, enable **Developer options → USB debugging**, connect the cable, and keep the screen unlocked. The menu path depends on the manufacturer. On the BTT:
 
 ```sh
 command -v adb
 ```
 
-Se não aparecer nenhum caminho:
+If ADB is absent:
 
 ```sh
 sudo apt-get update
 sudo apt-get install -y adb
 ```
 
-Depois:
+Then:
 
 ```sh
 adb devices -l
+TABLET_SERIAL='serial-shown-by-adb'
 ```
 
-**Confira:** copie o serial e procure `device`. Para `unauthorized`, aceite a autorização na tela. Para `no permissions`, vá à etapa seguinte. Se a lista estiver vazia, veja a [FAQ](FAQ.md) antes de instalar outros programas. No terminal do BTT, defina o serial exibido:
+Replace the sample value with the first-column serial. The state must be `device`. For `unauthorized`, accept the authorization prompt on the tablet. For `no permissions`, continue to step 3. For an empty list, check the [FAQ](FAQ.md) before installing anything else.
+
+## 3. Fix USB permissions only if needed
+
+This rule applies **only to `18d1:0003`**. Check that the BTT user belongs to `plugdev`. After changing group membership, reconnect SSH before continuing.
 
 ```sh
-TABLET_SERIAL='serial-exibido-pelo-adb'
-```
-
-## 3. Corrija permissões somente se necessário
-
-Esta regra é para **18d1:0003**. No BTT, confira `id`: o usuário precisa estar no grupo `plugdev`. Neste equipamento ele já estava; se você alterar grupos, encerre e abra a sessão SSH para o novo grupo valer.
-
-```sh
-cd ~/klipper-tablet-revival
 id
 ls -l /etc/udev/rules.d/70-btt-tablet-adb.rules
 ```
 
-Se o arquivo já existir, preserve uma cópia antes de substituí-lo:
+If an existing rule is present, preserve it in a unique directory. The conditional copy is safe when it is absent:
 
 ```sh
 mkdir -p ~/tablet-xsdl
@@ -95,7 +80,7 @@ fi
 echo "Backup: $backup_dir"
 ```
 
-Então:
+Only when the VID/PID matches:
 
 ```sh
 sudo install -m 0644 config/70-btt-tablet-adb.rules /etc/udev/rules.d/70-btt-tablet-adb.rules
@@ -106,13 +91,11 @@ adb start-server
 adb devices -l
 ```
 
-**Confira:** agora precisa aparecer `device`. Não prossiga com erro de permissão.
+Stop if the selected tablet still is not `device`. Do not run ADB as root on the BTT to bypass permissions.
 
-## 4. Instale e abra o XServer XSDL
+## 4. Install XServer XSDL
 
-Para o NT-1710 testado, usamos **1.11.40**. Não é preciso instalar a versão que falhou primeiro.
-
-**No BTT:**
+**1.11.40** worked on the tested NT-1710. There is no reason to install the failed 1.20.51 first.
 
 ```sh
 mkdir -p ~/tablet-xsdl
@@ -122,78 +105,55 @@ curl -fL --connect-timeout 15 --max-time 180 \
 sha256sum ~/tablet-xsdl/XServer-XSDL-1.11.40.apk
 ```
 
-**Confira o hash:** `69e015154e115465a27495a624a3445544886ba05fd16068a73738a0c19848e2`.
-
-Se o app ainda não estiver instalado:
+The recorded SHA-256 is `69e015154e115465a27495a624a3445544886ba05fd16068a73738a0c19848e2`. If it differs, stop and inspect the download. If XSDL is not installed:
 
 ```sh
 adb -s "$TABLET_SERIAL" install ~/tablet-xsdl/XServer-XSDL-1.11.40.apk
 adb -s "$TABLET_SERIAL" shell am start -n x.org.server/.MainActivity
 ```
 
-**Confira:** a instalação deve mostrar `Success`. O app pode precisar extrair/baixar dados na primeira abertura. Aguarde. Se mostrar erro de fontes/HTTPS, veja [reparos específicos](INSTALACAO.md#fontes-e-android-com-tls-antigo). Se uma versão mais nova já estiver instalada, não faça downgrade às cegas: preserve os dados primeiro.
+Installation should say `Success`. Allow time for first-run data/fonts. For a font/HTTPS error, see [the specific repair](INSTALACAO.md#old-android-tls-and-fonts). If another version is already installed, back up its data before considering any downgrade.
 
-## 5. Escolha toque direto
+## 5. Choose direct touch
 
-**No tablet, na abertura do XSDL:** entre em **Change Device Configuration → Mouse Emulation Mode → Desktop, No Emulation**. Os nomes podem variar. O objetivo é movimento absoluto e clique normal, sem modo touchpad.
+On the tablet at XSDL startup, choose **Change Device Configuration → Mouse Emulation Mode → Desktop, No Emulation**. Labels may vary by version. You want absolute pointer movement and normal clicks, not touchpad emulation. If the menu cannot fix the exact tested profile, [TOUCH.md](TOUCH.md) records a guarded patch and rollback; do not apply it to a different configuration format.
 
-Se o menu não resolver no perfil exato testado, [TOUCH.md](TOUCH.md) contém o patch validado e seu rollback. Não use o patch em arquivos de versões diferentes.
+## 6. Check X11 over USB
 
-## 6. Confira a conexão X11 pelo USB
-
-**No BTT, com XSDL aberto:**
+With XSDL open, on the BTT:
 
 ```sh
 adb -s "$TABLET_SERIAL" forward tcp:6100 tcp:6000
 timeout 8 xset -display :100 -q
 ```
 
-**Confira:** deve aparecer uma lista com teclado, ponteiro e fontes. Essa resposta prova a comunicação com o servidor X; ainda não prova que KlipperScreen está aparecendo.
+Expected: keyboard, pointer and font information. This proves X11 responds, **not** that KlipperScreen is visible yet. If `xset` is missing, install `x11-xserver-utils`. For timeout or `unable to open display`, use the [FAQ](FAQ.md); do not restart Klipper or Moonraker for an XServer issue.
 
-Se `xset` não existir, instale o pacote Debian que o fornece:
+## 7. Configure KlipperScreen's launcher
 
-```sh
-sudo apt-get install -y x11-xserver-utils
-```
-
-Se houver timeout ou `unable to open display`, veja [FAQ](FAQ.md). Não reinicie Klipper ou Moonraker para corrigir um problema do XServer.
-
-## 7. Ative o launcher do KlipperScreen
-
-**No BTT:**
+On the BTT, inspect the current launcher. Save it if present before installing this repository's initial launcher:
 
 ```sh
 cd ~/klipper-tablet-revival
-mkdir -p ~/tablet-xsdl/backups
 ls -l ~/KlipperScreen/scripts/launch_KlipperScreen.sh
-```
-
-Se já existir, copie para backup antes de continuar:
-
-```sh
 backup_dir=$(mktemp -d "$HOME/tablet-xsdl/backup.XXXXXXXX")
 if [ -e "$HOME/KlipperScreen/scripts/launch_KlipperScreen.sh" ]; then
     cp "$HOME/KlipperScreen/scripts/launch_KlipperScreen.sh" "$backup_dir/"
 fi
 echo "Backup: $backup_dir"
-```
-
-Copie e edite o serial:
-
-```sh
 install -m 0755 scripts/launch_KlipperScreen.sh ~/KlipperScreen/scripts/launch_KlipperScreen.sh
 nano ~/KlipperScreen/scripts/launch_KlipperScreen.sh
 ```
 
-Altere a linha `export ANDROID_SERIAL="<DeviceSerialNumber>"` para o serial mostrado pelo seu ADB. Salve. Confira:
+Change the `export ANDROID_SERIAL=...` assignment to the serial from `adb devices -l`; leave the validation below it unchanged. The launcher refuses the redacted default. Save, then check:
 
 ```sh
 bash -n ~/KlipperScreen/scripts/launch_KlipperScreen.sh
-grep ANDROID_SERIAL ~/KlipperScreen/scripts/launch_KlipperScreen.sh
+grep '^export ANDROID_SERIAL' ~/KlipperScreen/scripts/launch_KlipperScreen.sh
 systemctl cat KlipperScreen
 ```
 
-**Confira:** `bash -n` deve terminar sem erro; o serial deve ser o correto. O serviço existente deve iniciar `KlipperScreen-start.sh` e definir `KS_XCLIENT`, como no ambiente validado. Se usar outro mecanismo de inicialização, adapte com a documentação oficial antes de prosseguir.
+The existing KlipperScreen unit must start `KlipperScreen-start.sh` and provide `KS_XCLIENT`, as in the tested setup. If yours differs, adapt using KlipperScreen's own documentation before restarting:
 
 ```sh
 sudo systemctl restart KlipperScreen
@@ -201,19 +161,13 @@ journalctl -u KlipperScreen -n 30 --no-pager
 systemctl is-active KlipperScreen klipper moonraker
 ```
 
-**Confira no tablet:** a interface deve aparecer e mostrar a conexão com a impressora. Serviço `active` sozinho não confirma imagem ou toque.
+## 8. Confirm on the screen
 
-## 8. Faça um teste simples e confira o resultado
-
-Na tela, abra **More** e volte. O botão deve responder onde seu dedo encosta. Para esta primeira verificação, menus são suficientes; não é necessário movimentar eixos nem aquecer nada.
-
-**No BTT:**
+The interface should appear on the tablet and connect to the printer. Open **More** and go back to confirm the touch position. Menus are enough; do not move axes, extrude or heat for this first check. On the BTT:
 
 ```sh
 adb forward --list
 xset -display :100 -q
 ```
 
-**Confira:** encaminhamento `tcp:6100 tcp:6000`; descanso X11 com `timeout: 0`. O XSDL testado informa que não suporta DPMS.
-
-Pronto: você reproduziu as verificações principais! Registre modelo, versão e resultado. Para recuperar o painel automaticamente após reboot, siga a etapa adicional de [supervisão da reconexão](RECONEXAO.md), testada no BTT e tablet deste projeto. Teste prolongado e reconexão física do cabo continuam pendentes. Se precisar desfazer, consulte [MANUTENCAO.md](MANUTENCAO.md).
+Expected: `tcp:6100 tcp:6000`, X11 `timeout: 0`, and visible, responsive menus. The tested XSDL does not support DPMS. Record your model/version and any deviations. For boot recovery, follow the optional [automatic reconnection](RECONEXAO.md) procedure. Physical cable removal, extended operation and Wi-Fi-disabled operation are still untested; use [rollback](MANUTENCAO.md) if needed.

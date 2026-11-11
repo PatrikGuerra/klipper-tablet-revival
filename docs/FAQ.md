@@ -1,22 +1,22 @@
-# Problemas comuns
+# Common problems
 
-Siga primeiro o [guia principal](COMECE_AQUI.md). Esta página ajuda a escolher o próximo passo; os procedimentos específicos ficam nos documentos vinculados.
+Follow the [main guide](COMECE_AQUI.md) first. Use this page to choose the next check; specific repair procedures are linked below.
 
-| Sintoma ou dúvida | O que conferir |
+| Symptom or question | What to check |
 |---|---|
-| `btt.local` não resolve | Descubra o IP atual do BTT no roteador ou na configuração de rede. O nome não resolveu na sessão original. |
-| `adb devices -l` vazio | Cabo **de dados**, porta USB, tablet desbloqueado e depuração USB habilitada. Não avance para XSDL antes de ADB funcionar. |
-| `unauthorized` | Aceite a autorização ADB na tela do tablet. |
-| `no permissions` | Confira VID/PID, grupo `plugdev`, [regra udev restrita e reinício do daemon ADB](COMECE_AQUI.md#3-corrija-permissões-somente-se-necessário). A regra deste repo é só para `18d1:0003`. |
-| XSDL 1.20.51 instala, mas não inicia | Isso ocorreu no NT-1710. Comece com **1.11.40** nesse modelo; a causa exata da falha da 1.20.51 não foi isolada. Não faça downgrade sobre dados existentes sem backup. |
-| `xfonts.tgz` falha com TLS/HTTPS | O Android antigo não negociou o redirecionamento HTTPS. Veja [reparo de fontes](INSTALACAO.md#fontes-e-android-com-tls-antigo), que exige acesso root preexistente ao app. |
-| `XKB: Couldn't compile keymap` | Após o downgrade original havia arquivos incompatíveis. Veja [reparo XKB](INSTALACAO.md#erro-xkb-após-troca-de-versão); não é etapa normal de instalação. |
-| `xset` não responde | Verifique XSDL, [display/porta e logs](INSTALACAO.md#x11-sem-resposta). `:0` usa 6000; não encerre processos por PID copiado de outro equipamento. |
-| Toque parece touchpad ou deslocado | Use **Desktop, No Emulation**. Se falhar no perfil validado, veja [TOUCH.md](TOUCH.md); não force escala só pela diferença 800×480/800×444. |
-| Serviço `active`, mas sem interface | Confirme `adb forward --list`, `xset -display :100 -q`, logs e a **tela física**; serviço ativo não comprova desenho/toque. |
-| A tela apaga | O descanso X11 é separado do Android. O launcher aplica `xset s off`; confira `timeout: 0` em `xset -q` e revise bloqueio do Android. |
-| Preciso de root ou APK customizado? | Não foi criado APK nem feito root. O exemplar já tinha shell ADB root; somente os [reparos internos](INSTALACAO.md) e o [patch de toque](TOUCH.md) dependem dele. Sem root, não há reparo interno validado aqui. |
-| Preciso de Wi-Fi para a imagem? | O transporte configurado é ADB/USB; SSH usa rede só para administrar o BTT. O tablet estava com Wi-Fi ligado, então o teste isolado com Wi-Fi desligado ainda falta. |
-| Reconecta sozinho? | Reboots do tablet e BTT passaram com o [supervisor](RECONEXAO.md). Remoção física do cabo, falta de energia, PIN, depuração desativada e autorização revogada não foram validados/recuperados automaticamente. |
+| `btt.local` does not resolve | Find the BTT's current IP in your router or network settings. The name did not resolve in the original session. |
+| `adb devices -l` is empty | A **data-capable** cable, USB port, unlocked tablet and USB debugging. Do not proceed to XSDL before ADB works. |
+| `unauthorized` | Accept the ADB authorization prompt on the tablet. |
+| `no permissions` | Check VID/PID, `plugdev` membership, the [device-specific udev rule and ADB daemon restart](COMECE_AQUI.md#3-fix-usb-permissions-only-if-needed). This repository's rule is only for `18d1:0003`. |
+| XSDL 1.20.51 installs but does not start | This happened on the NT-1710. Start with **1.11.40** on this model; the exact cause of the newer version's failure was not isolated. Do not downgrade over existing data without a backup. |
+| `xfonts.tgz` fails with TLS/HTTPS | The old Android did not negotiate the HTTPS redirect. See the [font repair](INSTALACAO.md#old-android-tls-and-fonts), which requires pre-existing root access to the app. |
+| `XKB: Couldn't compile keymap` | The original downgrade left incompatible files. See the [XKB repair](INSTALACAO.md#xkb-error-after-a-version-change); it is not a normal installation step. |
+| `xset` does not respond | Check XSDL, [display/port and logs](INSTALACAO.md#x11-does-not-respond). `:0` uses port 6000; do not stop a process using a PID copied from another device. |
+| Touch behaves like a touchpad or is offset | Choose **Desktop, No Emulation**. If that fails on the validated profile, see [TOUCH.md](TOUCH.md); do not force scaling because of the 800×480/800×444 difference alone. |
+| Service is `active`, but the interface is absent | Check `adb forward --list`, `xset -display :100 -q`, logs and the **physical screen**. Service state does not prove rendering or touch. |
+| The screen goes blank | X11 blanking is separate from Android settings. The launcher applies `xset s off`; check `timeout: 0` in `xset -q` and review Android locking. |
+| Is root or a custom APK required? | No APK was created and the device was not rooted by this project. The unit already had an ADB root shell; only [internal repairs](INSTALACAO.md) and the [touch patch](TOUCH.md) depend on it. No rootless internal repair was validated. |
+| Is Wi-Fi needed for the image? | The configured transport is ADB/USB; SSH uses the network only to administer the BTT. The tablet's Wi-Fi was on, so an isolated Wi-Fi-off test remains open. |
+| Does it reconnect automatically? | Tablet and BTT reboots passed with the [supervisor](RECONEXAO.md). Physical cable removal, power loss, PIN locks, disabled debugging and revoked authorization are untested/not automatically fixed. |
 
-O [NT-1710 testado](TABLET_TESTADO.md) é um exemplo confirmado, não uma garantia de compatibilidade universal. Repositório privado só é legível por quem tem acesso, independentemente das tags.
+The [tested NT-1710](TABLET_TESTADO.md) is a confirmed example, not a universal compatibility guarantee. A private repository is readable only to people with access, regardless of its topics.

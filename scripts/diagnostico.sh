@@ -1,6 +1,6 @@
 #!/bin/bash
-# Uso: bash scripts/diagnostico.sh [serial-adb]
-# A consulta ADB pode iniciar o daemon local; não modifica o Android.
+# Usage: bash scripts/diagnostico.sh [adb-serial]
+# The ADB query can start the local daemon; it does not modify Android.
 serial=${1:-${TABLET_SERIAL:-}}
 cat /etc/os-release
 uname -m
@@ -16,7 +16,7 @@ if command -v adb >/dev/null; then
         adb -s "$serial" shell getprop ro.build.version.release
         adb -s "$serial" shell getprop ro.product.cpu.abi
     else
-        echo 'Passe o serial ADB para consultar os dados do tablet.' >&2
+        echo 'Pass an ADB serial to query tablet properties.' >&2
     fi
 fi
 if command -v xset >/dev/null; then

@@ -6,7 +6,7 @@ TABLET_HOME=${TABLET_HOME:-"<DeviceHome>"}
 TABLET_DISPLAY=${TABLET_DISPLAY:-:100}
 TABLET_KEEP_FOREGROUND=${TABLET_KEEP_FOREGROUND:-1}
 if [[ $TABLET_SERIAL == '<DeviceSerialNumber>' || $TABLET_USER == '<DeviceUser>' || $TABLET_HOME == '<DeviceHome>' ]]; then
-    echo 'Configure TABLET_SERIAL, TABLET_USER e TABLET_HOME em tablet-usb-common.sh antes de iniciar.' >&2
+    echo 'Configure TABLET_SERIAL, TABLET_USER and TABLET_HOME in tablet-usb-common.sh before starting.' >&2
     exit 1
 fi
 tablet_as_user() {

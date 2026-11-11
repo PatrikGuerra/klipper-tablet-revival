@@ -1,15 +1,15 @@
-# Diagnóstico e rollback
+# Diagnosis and rollback
 
-Para sintomas, use a [FAQ](FAQ.md). No BTT, escolha o serial exibido por `adb devices -l` e rode o diagnóstico somente de leitura (a consulta ADB pode iniciar o daemon local):
+For symptoms, use the [FAQ](FAQ.md). On the BTT, use the serial shown by `adb devices -l` and run the read-only diagnostic script (its ADB queries may start the local daemon):
 
 ```sh
-TABLET_SERIAL='serial-exibido-pelo-adb'
+TABLET_SERIAL='serial-shown-by-adb'
 bash scripts/diagnostico.sh "$TABLET_SERIAL"
 ```
 
-## Desativar a integração
+## Disable the integration
 
-Pare primeiro o supervisor, para que ele não reabra XSDL. O launcher personalizado não existia antes **no equipamento testado**; em outra instalação, restaure o launcher original salvo no diretório de backup informado no [guia principal](COMECE_AQUI.md) ou na [instalação do supervisor](RECONEXAO.md). Não apague uma configuração anterior de terceiros.
+Stop the supervisor first so it cannot reopen XSDL. The custom launcher did not exist **on the tested BTT**. On another installation, restore its original launcher from the backup directory displayed by the [main guide](COMECE_AQUI.md) or [supervisor setup](RECONEXAO.md). Do not delete a third-party configuration.
 
 ```sh
 sudo systemctl disable --now tablet-usb-watchdog
@@ -17,16 +17,16 @@ sudo systemctl stop KlipperScreen
 mkdir -p ~/tablet-xsdl
 backup_dir=$(mktemp -d "$HOME/tablet-xsdl/rollback.XXXXXXXX")
 mv ~/KlipperScreen/scripts/launch_KlipperScreen.sh "$backup_dir/"
-echo "Launcher desativado: $backup_dir"
+echo "Disabled launcher: $backup_dir"
 sudo systemctl start KlipperScreen
 ```
 
-Sem launcher personalizado, o comportamento volta a depender do `KlipperScreen-start.sh` e da configuração preexistente. Se o serviço não subir, confira `journalctl -u KlipperScreen -n 40 --no-pager` e o backup correspondente. Para retirar a regra USB exclusiva, mova-a para fora de `/etc/udev/rules.d`, recarregue udev e reconecte apenas o tablet; não remova o pacote ADB automaticamente.
+Without the custom launcher, behavior again depends on the existing `KlipperScreen-start.sh` and prior configuration. If the service fails, inspect `journalctl -u KlipperScreen -n 40 --no-pager` and the relevant backup. To remove the device-specific USB rule, move it outside `/etc/udev/rules.d`, reload udev, and reconnect only the tablet. Do not automatically uninstall ADB; it may still be useful.
 
-## Backups no Android
+## Android backups
 
-- Configuração de toque anterior: `touch-settings-before.cfg` no BTT; veja [TOUCH.md](TOUCH.md).
-- Antes de reparar XSDL, o [guia de reparos](INSTALACAO.md) cria um TAR único em `/sdcard` e o copia ao BTT. Restauração integral não testada.
-- `xkbcomp.pre-repair`, quando criado, aponta para a instalação anterior; não é alternativa funcional garantida.
+- Previous touch settings: `touch-settings-before.cfg` on the BTT; see [TOUCH.md](TOUCH.md).
+- Before XSDL repair, the [repair guide](INSTALACAO.md) creates a unique TAR on `/sdcard` and copies it to the BTT. Full restore was not tested.
+- `xkbcomp.pre-repair`, if created, points to the prior installation; it is not a guaranteed working rollback.
 
-Nunca restaure um TAR completo sobre o aplicativo em execução. Examine conteúdo, proprietário e versão antes. Ainda faltam testes com Wi-Fi desligado, desconexão física do cabo e operação prolongada; reboots do BTT/tablet e retomada do XSDL foram testados.
+Never restore a full TAR over a running app. Inspect its contents, ownership and version first. Wi-Fi-off, physical cable disconnection and long-duration operation remain untested; BTT/tablet reboots and XSDL recovery were tested.

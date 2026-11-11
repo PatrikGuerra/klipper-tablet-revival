@@ -41,7 +41,7 @@ On the BTT, with ADB installed and the tablet authorized, run:
 
 ```sh
 adb devices -l
-TABLET_SERIAL='serial-exibido-pelo-adb'
+TABLET_SERIAL='serial-shown-by-adb'
 adb -s "$TABLET_SERIAL" shell getprop ro.product.model
 adb -s "$TABLET_SERIAL" shell getprop ro.product.device
 adb -s "$TABLET_SERIAL" shell getprop ro.product.name

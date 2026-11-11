@@ -1,17 +1,17 @@
-# Validação do material publicado
+# Validation of the published material
 
-## Evidência da instalação
+## Installation evidence
 
-- `adb devices -l`: serial do NT-1710 em estado `device`.
-- `xset -display :100 -q`: servidor X respondeu pelo encaminhamento USB.
-- `systemctl is-active KlipperScreen klipper moonraker`: os três ativos.
-- Logs de KlipperScreen: inicialização da impressora e leitura das temperaturas.
-- Captura real do Android incluída em `images/klipperscreen-usb.png`.
-- Confirmação física do usuário após a correção do touch: toque funcionando corretamente.
+- `adb devices -l` showed the NT-1710 in `device` state.
+- `xset -display :100 -q` responded through USB forwarding.
+- `systemctl is-active KlipperScreen klipper moonraker` reported all three active.
+- KlipperScreen logs showed printer initialization and temperature reads.
+- A real Android screenshot is included at [images/klipperscreen-usb.png](images/klipperscreen-usb.png).
+- After the touch correction, the user physically confirmed correct behavior.
 
-## Scripts do repositório
+## Original script checks
 
-As cópias publicadas foram enviadas para `<DeviceHome>/tablet-xsdl` somente para verificação, sem substituir o launcher em uso:
+Copies of the then-published scripts were sent to `<DeviceHome>/tablet-xsdl` for verification, without replacing the active launcher:
 
 ```sh
 bash -n ~/tablet-xsdl/launch_KlipperScreen.sh
@@ -23,19 +23,15 @@ python3 ~/tablet-xsdl/patch_touch.py /tmp/revival-verify-20261109-a.cfg /tmp/rev
 cmp /tmp/revival-verify-20261109-a.cfg /tmp/revival-verify-20261109-b.cfg
 ```
 
-Todos concluíram com sucesso. O patch produziu **exatamente os mesmos bytes** da configuração aplicada e confirmada pelo usuário. Reaplicá-lo à configuração corrigida não mudou seu conteúdo (idempotência).
+These checks passed. The patch produced **the same bytes** as the settings confirmed by the user; reapplying it did not change the output. The real `.cfg` files were not published. This did not exercise printer controls.
 
-Os arquivos `.cfg` reais não foram publicados. O teste foi executado no BTT usando os backups já existentes; não foram inventados dados de calibração nem acionados controles da impressora.
+The entire guide was not rerun from scratch, which would require another tablet or reinstall. The diagnostic script's syntax was checked, but the full script was not rerun as a separate hardware test. Tablet/BTT reboots were later tested under [automatic reconnection](RECONEXAO.md). Physical cable removal and long-duration operation remain open. See [history](HISTORICO.md) for the difference between the planned and actual paths.
 
-## O que esta validação não cobre
+## Checking an installation today
 
-O guia inteiro não foi repetido do zero: isso exigiria outro tablet ou reinstalação. O script de diagnóstico teve sua sintaxe conferida; seus comandos correspondem às inspeções usadas na sessão, mas não foi executado integralmente como um novo teste. Na etapa inicial não houve reboot; a etapa posterior de [supervisão da reconexão](RECONEXAO.md) executou os reboots reais e registra seus resultados. Teste prolongado e retirada física do cabo continuam pendentes. As diferenças entre o roteiro ideal e a recuperação real estão registradas em HISTORICO.md.
+After the original tests, the three installed supervisor scripts matched the repository files **at that time**. Those hashes predate anonymization and this documentation revision, so they cannot establish that a current installation uses this commit. The installed common script also intentionally differs because it contains the local user/serial/path configuration.
 
-## Verificação final da automação
-
-Depois dos testes reais, os scripts instalados **naquela sessão** coincidiam com os arquivos do repositório **antes** da anonimização e desta revisão. Os hashes antigos não identificam as versões publicadas agora; não servem para comprovar que uma instalação atual usa este commit. A configuração local do usuário/serial também faz o arquivo comum instalado diferir intencionalmente do modelo publicado.
-
-Para conferir uma instalação nova, execute no BTT a partir da raiz do repositório:
+From the repository root on the BTT, check current files:
 
 ```sh
 printf '%s\0' scripts/*.sh | xargs -0 -n 1 bash -n
@@ -45,4 +41,4 @@ diff -u scripts/tablet-usb-watchdog.sh /usr/local/bin/tablet-usb-watchdog.sh
 diff -u scripts/tablet-usb-common.sh /usr/local/lib/tablet-usb-common.sh
 ```
 
-O `diff` do arquivo comum deve mostrar somente os valores locais configurados. Confira também o launcher instalado contra `scripts/launch_KlipperScreen-autoconnect.sh`; se usa o launcher inicial, compare com `scripts/launch_KlipperScreen.sh`, esperando a substituição do serial. Supervisor e KlipperScreen estavam habilitados no boot no teste original; a janela em foco era `x.org.server/.MainActivity`, e a captura final mostrava a interface conectada à impressora.
+The common-script diff should show only configured local values. Compare the installed launcher with `scripts/launch_KlipperScreen-autoconnect.sh`, or with `scripts/launch_KlipperScreen.sh` if still using the initial one (expect the serial assignment to differ). In the original test, supervisor, KlipperScreen, Klipper and Moonraker were active; the Android foreground window was `x.org.server/.MainActivity` and the final screenshot showed the connected interface.

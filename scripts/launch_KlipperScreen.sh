@@ -1,9 +1,9 @@
 #!/bin/bash
-# Adaptado de KlipperScreen/scripts/sample-android-adb.sh.
-# Snapshot funcional desta instalação. Ajuste o serial para outro tablet.
+# Adapted from KlipperScreen/scripts/sample-android-adb.sh.
+# Working snapshot of this installation. Change the serial for another tablet.
 export ANDROID_SERIAL=${ANDROID_SERIAL:-"<DeviceSerialNumber>"}
 if [[ $ANDROID_SERIAL == '<DeviceSerialNumber>' ]]; then
-    echo 'Configure ANDROID_SERIAL no launcher antes de iniciar.' >&2
+    echo 'Configure ANDROID_SERIAL in the launcher before starting.' >&2
     exit 1
 fi
 # forward local display :100 to remote display :0

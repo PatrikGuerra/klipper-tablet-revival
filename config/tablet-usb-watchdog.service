@@ -1,5 +1,5 @@
 [Unit]
-Description=Recuperacao do tablet USB XSDL para KlipperScreen
+Description=Recover the USB XSDL tablet panel for KlipperScreen
 After=systemd-udevd.service KlipperScreen.service
 Wants=KlipperScreen.service
 

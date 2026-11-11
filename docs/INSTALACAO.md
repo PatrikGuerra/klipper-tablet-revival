@@ -1,19 +1,19 @@
-# Reparos avançados do XServer XSDL
+# Advanced XServer XSDL repairs
 
-Para uma instalação nova, siga apenas [COMECE_AQUI.md](COMECE_AQUI.md). Os procedimentos abaixo documentam falhas **específicas** do NT-1710 testado; não são etapas obrigatórias. Use-os somente após confirmar o mesmo erro, a mesma versão do APK e o estado do seu tablet. Não limpe os dados do aplicativo nem faça downgrade sem preservar a instalação atual.
+For a new installation, follow only [the main guide](COMECE_AQUI.md). The procedures below record **specific failures** on the tested NT-1710. They are not required steps. Use them only after confirming the same error, APK version and device state. Do not clear app data or downgrade without preserving the current installation.
 
-Todos os comandos são executados no BTT por SSH. Após `adb devices -l`, defina `TABLET_SERIAL='serial-exibido-pelo-adb'` no mesmo terminal. O aplicativo deve estar instalado antes dos reparos. Para diagnóstico de porta/display, use a [seção final](#x11-sem-resposta).
+Run all commands on the BTT over SSH. After `adb devices -l`, set `TABLET_SERIAL='serial-shown-by-adb'` in the same shell. XSDL must already be installed. If X11 does not respond, check [the final section](#x11-does-not-respond).
 
-## Antes de alterar arquivos internos
+## Before changing internal files
 
-**Exige shell ADB root já disponível no tablet.** O exemplar testado retornou `uid=0(root)`; este projeto não realizou root. Se `adb shell id` não retornar `uid=0`, **pare aqui**. Não há procedimento sem root validado para copiar arquivos internos; tente uma instalação limpa suportada pelo XSDL ou investigue outro método sem usar estes comandos.
+**Requires pre-existing ADB root shell on the tablet.** The tested unit returned `uid=0(root)`; this project did not root it. If `adb shell id` does not return `uid=0`, **stop here**. No rootless method for writing internal app files was validated. Try a clean XSDL-supported installation or investigate another approach; do not run these commands without access.
 
 ```sh
 adb -s "$TABLET_SERIAL" shell id
 adb -s "$TABLET_SERIAL" shell ls -ld /data/data/x.org.server/files
 ```
 
-Antes de **qualquer** reparo, pare o aplicativo e faça um backup único. Confira que `adb pull` e `tar -tf` terminam sem erro antes de prosseguir. A restauração completa desse TAR não foi testada.
+Before **either** repair, stop the app and make a unique backup. Confirm `adb pull` and `tar -tf` succeed before changing anything. Restoring this entire TAR has not been tested.
 
 ```sh
 mkdir -p ~/tablet-xsdl
@@ -26,9 +26,9 @@ tar -tf "$backup_dir/$android_backup" >/dev/null
 echo "Backup: $backup_dir/$android_backup"
 ```
 
-## Fontes e Android com TLS antigo
+## Old Android TLS and fonts
 
-No tablet testado, a 1.11.40 tentou obter `xfonts.tgz` por HTTP, foi redirecionada a HTTPS e falhou com `SSLHandshakeException / unsupported protocol`. O BTT conseguiu baixar o arquivo oficial. O hash observado está em [checksums.sha256](../checksums.sha256); compare-o antes de transferir.
+On the tested tablet, XSDL 1.11.40 requested `xfonts.tgz` over HTTP, was redirected to HTTPS, and failed with `SSLHandshakeException / unsupported protocol`. The BTT downloaded the official archive. Compare its recorded hash in [checksums.sha256](../checksums.sha256) before transferring it.
 
 ```sh
 curl -fL --connect-timeout 15 --max-time 180 \
@@ -39,22 +39,22 @@ adb -s "$TABLET_SERIAL" push ~/tablet-xsdl/xfonts.tar.gz /data/local/tmp/xfonts.
 adb -s "$TABLET_SERIAL" shell 'busybox gunzip -c /data/local/tmp/xfonts.tar.gz | busybox tar -xf - -C /data/data/x.org.server/files'
 ```
 
-O BusyBox desse Android não aceitava `tar -z`. A árvore contém links simbólicos, por isso a extração no armazenamento externo falhou. Na sessão original a extração foi interrompida; as fontes resultantes permitiram iniciar o XSDL, mas a integridade de todas elas não foi auditada. **Numa reprodução, espere a conclusão e confira os erros.**
+This Android's BusyBox did not support `tar -z`. The font tree contains symbolic links, so extraction to external Android storage failed. In the original session extraction was interrupted; the resulting tree let XSDL run, but the completeness of every font was **not** audited. For a reproduction, wait for extraction to finish and inspect errors.
 
-Só depois de confirmar as fontes, crie o marcador exigido por esta versão. Seu conteúdo é a especificação completa, **sem quebra de linha**, não apenas a URL:
+Only after confirming the fonts, create the marker required by this version. Its content is the **full specification without a newline**, not just a URL:
 
 ```sh
 printf %s :xfonts.tar.gz:http://sourceforge.net/projects/libsdl-android/files/apk/XServer-XSDL/xfonts.tgz/download > ~/tablet-xsdl/libsdl-DownloadFinished-2.flag
 adb -s "$TABLET_SERIAL" push ~/tablet-xsdl/libsdl-DownloadFinished-2.flag /sdcard/Android/data/x.org.server/files/
 ```
 
-O nome, índice e formato do marcador são específicos da 1.11.40. Se a pasta de destino não existir, pare e confira a versão instalada.
+The marker name, index and format are specific to 1.11.40. If the destination directory is absent, stop and verify the installed version.
 
-## Erro XKB após troca de versão
+## XKB error after a version change
 
-Na instalação original, a 1.20.51 iniciou com `X server failed to launch`; um downgrade para 1.11.40 com `adb install -r -d` preservou dados incompatíveis. Depois apareceram `XKB: Couldn't compile keymap` e `Failed to activate core devices`. **Não faça esse downgrade como teste inicial.** O caminho recomendado é começar com 1.11.40 no NT-1710.
+In the original installation, 1.20.51 failed with `X server failed to launch`. Downgrading to 1.11.40 with `adb install -r -d` preserved incompatible data, followed by `XKB: Couldn't compile keymap` and `Failed to activate core devices`. **Do not perform that downgrade as an initial test.** Start with 1.11.40 on the NT-1710.
 
-Somente se esse mesmo erro ocorrer **após o backup acima**, extraia os arquivos do APK 1.11.40 já baixado. Confira que o APK é o mesmo usado no tablet e observe o dono atual da pasta interna antes de copiar:
+Only if the same error occurs **after the backup above**, extract files from the already-downloaded 1.11.40 APK. Confirm it is the APK installed on the tablet and note the current owner of the internal directory:
 
 ```sh
 adb -s "$TABLET_SERIAL" shell ls -ld /data/data/x.org.server/files
@@ -63,25 +63,29 @@ mkdir -p "$backup_dir/data-old"
 tar -xzf "$backup_dir/data-1.tgz" -C "$backup_dir/data-old"
 unzip -p ~/tablet-xsdl/XServer-XSDL-1.11.40.apk assets/binaries-armeabi-v7a.zip > "$backup_dir/binaries-old.zip"
 unzip -p "$backup_dir/binaries-old.zip" usr/bin/xkbcomp > "$backup_dir/xkbcomp-old"
-adb -s "$TABLET_SERIAL" push "$backup_dir/data-old/usr" /data/data/x.org.server/files/
-adb -s "$TABLET_SERIAL" shell mv /data/data/x.org.server/files/usr/bin/xkbcomp /data/data/x.org.server/files/usr/bin/xkbcomp.pre-repair
-adb -s "$TABLET_SERIAL" push "$backup_dir/xkbcomp-old" /data/data/x.org.server/files/usr/bin/xkbcomp
-adb -s "$TABLET_SERIAL" shell chmod 755 /data/data/x.org.server/files/usr/bin/xkbcomp
 ```
 
-Na sessão, `chown 10076:10076` foi necessário para os arquivos internos repostos. **Esse UID/GID não é universal.** Use o proprietário observado no seu tablet e verifique após a alteração:
+Stop if extraction failed or the expected files are missing. The original session needed `chown 10076:10076` for restored internal files. **This UID/GID is not universal.** Set the owner observed on your tablet before copying; the condition below prevents copying when the sample value is unchanged:
 
 ```sh
-APP_OWNER='uid:gid-observados'
-adb -s "$TABLET_SERIAL" shell busybox chown -R "$APP_OWNER" /data/data/x.org.server/files/usr
-adb -s "$TABLET_SERIAL" shell ls -ld /data/data/x.org.server/files/usr
+APP_OWNER='observed-uid:gid'
+if [[ $APP_OWNER =~ ^[0-9]+:[0-9]+$ ]]; then
+    adb -s "$TABLET_SERIAL" push "$backup_dir/data-old/usr" /data/data/x.org.server/files/ &&
+    adb -s "$TABLET_SERIAL" shell mv /data/data/x.org.server/files/usr/bin/xkbcomp /data/data/x.org.server/files/usr/bin/xkbcomp.pre-repair &&
+    adb -s "$TABLET_SERIAL" push "$backup_dir/xkbcomp-old" /data/data/x.org.server/files/usr/bin/xkbcomp &&
+    adb -s "$TABLET_SERIAL" shell chmod 755 /data/data/x.org.server/files/usr/bin/xkbcomp &&
+    adb -s "$TABLET_SERIAL" shell busybox chown -R "$APP_OWNER" /data/data/x.org.server/files/usr &&
+    adb -s "$TABLET_SERIAL" shell ls -ld /data/data/x.org.server/files/usr
+else
+    echo 'Set APP_OWNER to the observed numeric UID:GID before copying files.' >&2
+fi
 ```
 
-Não foi feita limpeza dos dados do aplicativo. O `xkbcomp.pre-repair` preservado é um link da instalação anterior; não é um rollback garantido.
+App data was not cleared. The saved `xkbcomp.pre-repair` links to the previous installation and is not a guaranteed rollback.
 
-## X11 sem resposta
+## X11 does not respond
 
-Com XSDL aberto, o display final respondeu em `:0` (porta 6000):
+With XSDL open, the final display responded at `:0` (port 6000):
 
 ```sh
 adb -s "$TABLET_SERIAL" forward tcp:6100 tcp:6000
@@ -90,4 +94,4 @@ adb -s "$TABLET_SERIAL" shell netstat -lnt
 adb -s "$TABLET_SERIAL" logcat -d -t 200 | grep -E 'XSDL|XKB|Fatal|setenv DISPLAY'
 ```
 
-Durante as falhas, XSDL tentou `:1`, `:2` e `:3` (portas 6001–6003). Um `xsel` antigo também ocupava a porta 6000; foi identificado pelo processo real e encerrado, sem PID reutilizável. Inspecione a porta e o log **antes** de mudar o encaminhamento ou encerrar processos. `xset` responder confirma X11, não imagem/toque no tablet.
+During failures XSDL tried `:1`, `:2` and `:3` (ports 6001–6003). An old `xsel` process also held port 6000; it was identified and stopped by its actual PID. Inspect ports and logs **before** changing forwarding or stopping processes. A successful `xset` response proves X11, not visible image or touch.

@@ -1,33 +1,19 @@
-# Referências e procedência
+# References and provenance
 
-## Créditos aos projetos
+Credit belongs to the maintainers and contributors of [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen), [SDL Android / XServer XSDL](https://github.com/pelya/commandergenius), [Klipper](https://github.com/Klipper3d/klipper), [Moonraker](https://github.com/Arksine/moonraker) and [Android Platform Tools / ADB](https://developer.android.com/tools/adb). This repository integrates and documents them; it does not replace their authorship, support or licenses.
 
-Créditos aos mantenedores e colaboradores de [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen), [SDL Android / XServer XSDL](https://github.com/pelya/commandergenius), [Klipper](https://github.com/Klipper3d/klipper), [Moonraker](https://github.com/Arksine/moonraker) e [Android Platform Tools / ADB](https://developer.android.com/tools/adb). A solução reúne essas peças; não substitui a autoria, o suporte ou as licenças dos projetos originais. O README explica o papel de cada um.
+[DroidKlipp](https://github.com/CodeMasterCody3D/DroidKlipp) appeared in the initial research, but its scripts were not used. A pre-existing VNC app on the tablet was not changed. Neither project is a dependency of this installation.
 
-O [DroidKlipp](https://github.com/CodeMasterCody3D/DroidKlipp) também apareceu como referência no planejamento inicial, mas seus scripts não foram usados nesta instalação. Esse crédito de referência não significa que ele seja uma dependência ou que seu instalador tenha sido validado aqui.
+## Primary sources used
 
-## Fontes primárias usadas
+- [KlipperScreen: Android / XServer XSDL / ADB](https://klipperscreen.readthedocs.io/en/latest/Android/) — official launcher example, service setup, mouse guidance and 1.11.40 note for Android 4. Accessed 2026-11-09.
+- [KlipperScreen installation](https://klipperscreen.readthedocs.io/en/latest/Installation/) — reference; it was already installed and was not reinstalled.
+- [Observed KlipperScreen commit](https://github.com/KlipperScreen/KlipperScreen/tree/34610ceae31e12a10cc980e20a1dec9976f97dd4) and [ADB launcher at that commit](https://github.com/KlipperScreen/KlipperScreen/blob/34610ceae31e12a10cc980e20a1dec9976f97dd4/scripts/sample-android-adb.sh) — source of the adapted launcher, under KlipperScreen's own rights and license.
+- [Official SourceForge XServer XSDL downloads](https://sourceforge.net/projects/libsdl-android/files/apk/XServer-XSDL/) — APKs and fonts: [working 1.11.40](https://downloads.sourceforge.net/project/libsdl-android/apk/XServer-XSDL/XServer-XSDL-1.11.40.apk), [failed 1.20.51 on this tablet](https://downloads.sourceforge.net/project/libsdl-android/apk/XServer-XSDL/XServer-XSDL-1.20.51.apk), and [fonts](https://downloads.sourceforge.net/project/libsdl-android/apk/XServer-XSDL/xfonts.tgz).
+- [Android ADB documentation](https://developer.android.com/tools/adb) — USB, installation and port forwarding.
+- SDL Android source: [Settings.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/Settings.java), [SettingsMenuMouse.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/SettingsMenuMouse.java) and [Mouse.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/Mouse.java) — settings layout, mouse modes and `LEFT_CLICK_NORMAL=0`. These are consulted branch sources, not a pinned 2016 snapshot.
+- [SDL Android DataDownloader.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/DataDownloader.java) — investigated the download marker; current source format differs from the old app, so the accepted specification was validated on the tablet.
 
-- [KlipperScreen: Android / XServer XSDL / ADB](https://klipperscreen.readthedocs.io/en/latest/Android/) — cópia do launcher de exemplo, início do serviço, orientação de mouse e observação de usar 1.11.40 no Android 4. Página consultada em 09/11/2026.
-- [KlipperScreen: instalação](https://klipperscreen.readthedocs.io/en/latest/Installation/) — referência; KlipperScreen já estava instalado e não foi reinstalado.
-- [Código do KlipperScreen](https://github.com/KlipperScreen/KlipperScreen) — commit observado `34610ceae31e12a10cc980e20a1dec9976f97dd4`.
-- [Launcher ADB no commit observado](https://github.com/KlipperScreen/KlipperScreen/blob/34610ceae31e12a10cc980e20a1dec9976f97dd4/scripts/sample-android-adb.sh) — base do launcher adaptado; o projeto KlipperScreen mantém sua licença e direitos originais.
-- [SourceForge oficial: XServer XSDL](https://sourceforge.net/projects/libsdl-android/files/apk/XServer-XSDL/) — origem dos APKs e fontes.
-- [APK 1.11.40](https://downloads.sourceforge.net/project/libsdl-android/apk/XServer-XSDL/XServer-XSDL-1.11.40.apk) — versão funcional.
-- [APK 1.20.51](https://downloads.sourceforge.net/project/libsdl-android/apk/XServer-XSDL/XServer-XSDL-1.20.51.apk) — versão testada que falhou ao iniciar neste tablet.
-- [Arquivo de fontes](https://downloads.sourceforge.net/project/libsdl-android/apk/XServer-XSDL/xfonts.tgz) — salvo como `xfonts.tar.gz` no BTT.
-- [ADB: documentação Android](https://developer.android.com/tools/adb) — transporte USB, instalação e encaminhamento de portas.
-- [SDL Android: Settings.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/Settings.java) — layout de serialização das configurações; fonte da branch consultada, não snapshot histórico fixado da versão 2016.
-- [SDL Android: SettingsMenuMouse.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/SettingsMenuMouse.java) — associação entre movimento relativo, clique e modos de emulação.
-- [SDL Android: Mouse.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/Mouse.java) — constante `LEFT_CLICK_NORMAL=0`.
-- [SDL Android: DataDownloader.java](https://github.com/pelya/commandergenius/blob/sdl_android/project/java/DataDownloader.java) — investigação dos marcadores de download. O formato atual difere do antigo; a especificação aceita foi validada no tablet.
+The initial plan's hypotheses remain in Git history, outside the reproduction path. Where they differ, the [implementation record](HISTORICO.md) and observed evidence take precedence.
 
-## O que não foi utilizado
-
-O roteiro inicial mencionava DroidKlipp, VNC e eventual APK customizado. Não foram instalados, desenvolvidos ou integrados durante esta implementação. O app VNC preexistente no tablet não foi alterado.
-
-O planejamento inicial continha recomendações e hipóteses anteriores ao teste e permanece no histórico Git, fora do caminho de reprodução. Quando houver divergência, o [registro da implementação](HISTORICO.md) e a evidência desta instalação prevalecem.
-
-## Escopo de autoria
-
-Este repositório reúne documentação da sessão, regra udev, scripts auxiliares e adaptação do launcher oficial. Não redistribui APKs nem incorpora código-fonte completo dos projetos externos. O launcher é derivado do exemplo do KlipperScreen; consulte a licença do projeto original antes de redistribuí-lo fora deste contexto. Não foi atribuída uma nova licença genérica que substitua direitos de terceiros.
+This repository contains the session documentation, a udev rule, helper scripts and an adaptation of KlipperScreen's launcher. It redistributes neither APKs nor the complete external source projects. Consult the original project's license before redistributing the launcher outside this context; no new blanket license supersedes third-party rights.

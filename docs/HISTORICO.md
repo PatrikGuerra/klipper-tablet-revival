@@ -1,49 +1,38 @@
-# Registro da implementação
+# Implementation record
 
-Data: 09/11/2026, fuso America/Sao_Paulo. Este registro distingue resultados observados de sugestões do roteiro inicial.
+Date: 2026-11-09, America/Sao_Paulo. This record separates observed results from the original planning ideas. It is **not** the recommended step sequence; use [the main guide](COMECE_AQUI.md) for that.
 
-## Ambiente confirmado
+## Confirmed environment
 
-| Componente | Resultado |
+| Component | Observed value |
 |---|---|
-| Host | BTT Pi / imagem identificada como BTT-CB1 2.3.4 Bullseye |
-| Sistema | Debian GNU/Linux 11, aarch64, kernel 5.16.17-sun50iw9 |
-| Usuário | <DeviceUser>, membro de plugdev e sudo |
-| SSH usado | <DeviceHostIp>; `btt.local` não resolveu na máquina de administração |
-| RAM | Cerca de 986 MiB |
-| Disco raiz | 57 GiB, cerca de 51 GiB livres no diagnóstico inicial |
-| Tablet | NT-1710, produto nuclear_basic, Android 4.2.2, armeabi-v7a |
-| USB tablet | VID:PID 18d1:0003, serial ADB <DeviceSerialNumber> |
-| XSDL funcional | x.org.server/.MainActivity, versão 1.11.40 |
-| KlipperScreen | Já instalado, commit 34610ceae31e12a10cc980e20a1dec9976f97dd4 |
-| Klipper observado nos logs | v0.13.0-464-g48f0b3cad |
-| Serviços | Klipper, Moonraker e KlipperScreen ativos |
+| Host | BTT Pi / BTT-CB1 2.3.4 Bullseye image |
+| OS | Debian GNU/Linux 11, aarch64, kernel 5.16.17-sun50iw9 |
+| User / SSH | `<DeviceUser>`, in `plugdev` and `sudo`; `<DeviceHostIp>` worked, `btt.local` did not resolve |
+| RAM / root disk | About 986 MiB RAM; 57 GiB root disk, about 51 GiB free initially |
+| Tablet | NT-1710, product `nuclear_basic`, Android 4.2.2, `armeabi-v7a` |
+| Tablet USB | VID:PID `18d1:0003`, ADB serial `<DeviceSerialNumber>` |
+| Working XSDL | `x.org.server/.MainActivity`, version 1.11.40 |
+| KlipperScreen | Already installed, commit `34610ceae31e12a10cc980e20a1dec9976f97dd4` |
+| Klipper in logs | `v0.13.0-464-g48f0b3cad` |
+| Services | Klipper, Moonraker and KlipperScreen active |
 
-## Sequência real
+## What actually happened
 
-1. Leitura do roteiro original como referência, sem executar cegamente suas instruções.
-2. Tentativa de SSH por `btt.local` falhou na resolução. O IP informado pelo usuário permitiu o acesso.
-3. Inspeção somente de leitura confirmou três periféricos USB: tablet, webcam Microsoft LifeCam VX-500 e pendrive Kingston. Não houve alteração nos dois últimos.
-4. ADB estava ausente; instalado com dependências pelos repositórios Debian. Não foi feito upgrade geral.
-5. Tablet detectado, mas `no permissions`. A primeira escrita da regra perdeu aspas na passagem entre shells e foi corrigida. Foi aplicada a regra exclusiva `18d1:0003`, modo 0660, grupo plugdev. Após reiniciar o daemon ADB, estado `device`.
-6. XSDL 1.20.51, obtido no SourceForge oficial, instalou com sucesso. Ao abrir, exibiu `X server failed to launch`.
-7. XSDL 1.11.40 foi instalado por cima com `-r -d`, mantendo dados. É a alternativa citada pela documentação oficial para Android 4.
-8. O app falhou ao baixar fontes por incompatibilidade TLS do Android antigo. O BTT baixou o arquivo oficial e transferiu por ADB.
-9. Apenas copiar o arquivo compactado não resolveu: o app tentou retomar o download. A cópia da árvore para o armazenamento externo falhou em links simbólicos. Foram disponibilizadas fontes na pasta interna do app; a extração foi interrompida após longa espera, mas a árvore resultante permitiu o funcionamento. Integridade integral das fontes não foi auditada.
-10. O marcador de download contendo apenas a URL foi rejeitado/removido pelo app. O marcador com a especificação completa da versão antiga foi aceito.
-11. Foram encontrados arquivos X11 ausentes e um `xkbcomp` apontando para binário da versão anterior. Repostos arquivos de `assets/data-1.tgz` e o binário ARMv7 não PIE de `assets/binaries-armeabi-v7a.zip`, ambos do APK 1.11.40.
-12. A tentativa de limpar dados via `pm clear x.org.server` foi bloqueada antes da execução pela revisão automática. Não foi contornada; foi seguido o reparo de arquivos preservando dados. Uma cópia TAR foi gerada no tablet antes da troca do xkbcomp; restauração integral não testada.
-13. Durante as falhas, o XSDL mudou de número de display e um `xsel` antigo manteve a porta 6000 ocupada. O processo foi identificado e encerrado. A instância final passou a escutar no display :0, porta 6000.
-14. `adb forward tcp:6100 tcp:6000` e `xset -display :100 -q` responderam corretamente.
-15. Criado launcher baseado no exemplo já presente no KlipperScreen: serial definido, `am start` no Android antigo, descanso desativado via xset. Unidade systemd preservada. Reiniciado apenas o serviço KlipperScreen.
-16. Captura do Android confirmou a interface do KlipperScreen e temperaturas do Moonraker. Nenhum comando físico de impressora foi executado.
-17. Usuário relatou toque errado. Matriz XInput identidade, superfície 800×444, calibração SDL sem ajustes; configuração revelava modo touchpad (`relative=true`) e clique 7.
-18. Backup da configuração, parada de KlipperScreen/XSDL, alteração mínima para movimento absoluto e clique normal. Leitura posterior confirmou o arquivo aplicado. Usuário confirmou que estava funcionando muito bem.
+1. The original plan was treated as a reference, not run blindly. `btt.local` did not resolve; the owner-provided IP allowed SSH.
+2. Read-only USB inspection found the tablet, a Microsoft LifeCam VX-500 webcam and a Kingston flash drive. The latter two were not changed.
+3. ADB was missing and installed from Debian packages without a general upgrade. The tablet appeared as `no permissions`. A device-specific `18d1:0003` udev rule (`0660`, `plugdev`) fixed permissions; restarting the ADB daemon cleared its stale state. A first rule write lost quotes across shells and was corrected.
+4. Official XSDL 1.20.51 installed but reported `X server failed to launch`. Version 1.11.40, cited by the KlipperScreen Android guide for Android 4, was installed with `-r -d`, retaining incompatible data. New installations should **start with 1.11.40** on this hardware.
+5. The old Android could not negotiate the font download's HTTPS redirect. The BTT downloaded official fonts and transferred them through ADB. Copying only the archive did not work; extracting to external storage failed on symbolic links. Fonts were placed in the internal app directory. Extraction was interrupted after a long wait; the resulting tree worked, but complete font integrity was not audited.
+6. A marker containing only the URL was rejected. The complete version-specific download specification was accepted.
+7. X11 files were missing and `xkbcomp` pointed at the prior-version binary. Files from the **same 1.11.40 APK** were restored. An attempted `pm clear` was stopped during review before execution; app data was preserved. An Android TAR backup was made, but full restore was not tested.
+8. While XSDL failed, it tried other display numbers, and an old `xsel` held port 6000. The actual process was identified and stopped. The final XSDL listened on display `:0`/port 6000; ADB forwarding and `xset -display :100 -q` responded.
+9. A launcher based on KlipperScreen's example set an explicit serial, used a start command compatible with Android 4.2.2, and disabled X11 blanking. The KlipperScreen systemd unit itself was preserved; only that service was restarted.
+10. A screen capture showed KlipperScreen menus and Moonraker temperatures. No axis movement, extrusion or heating was triggered.
+11. The user's touch report prompted inspection: the XInput matrix was identity, SDL calibration unchanged, and XSDL's usable area 800×444. The problem was relative/touchpad movement and timeout clicking. After backing up settings, only those two values were changed. The user confirmed correct touch.
 
-## Estado final e limitações
+## Final state and limits
 
-Na conclusão da primeira etapa, o painel funcionava e o toque havia sido confirmado fisicamente pelo usuário. Não houve teste de isolamento desligando Wi-Fi, mas a conexão X11 configurada usa o encaminhamento ADB USB, não o IP do tablet. Naquele momento, reinício completo, reconexão USB e monitoramento prolongado não haviam sido testados e não havia watchdog.
+At the end of the first phase, the interface and touch worked, but reboots and reconnection had not yet been tested. Later on the same date, a supervisor was installed and separate BTT/tablet reboots, app recovery and foreground restoration were tested; see [automatic reconnection](RECONEXAO.md). Physical USB cable removal, Wi-Fi-off operation and extended monitoring remain untested. No DroidKlipp, custom APK or power-supply modification was used.
 
-Na etapa posterior, ainda em 09/11/2026, foi instalado um supervisor de reconexão. Foram testados reboots separados do BTT e tablet, recuperação do aplicativo e manutenção do painel em primeiro plano. Veja [RECONEXAO.md](RECONEXAO.md) para os resultados atuais. Não foi usado DroidKlipp, APK customizado nem modificação de alimentação.
-
-A captura em `images/klipperscreen-usb.png` é anterior à correção do touch; comprova a imagem, enquanto a confirmação posterior do usuário comprova a experiência de toque.
+The image [klipperscreen-usb.png](images/klipperscreen-usb.png) predates the touch fix. It proves the interface appeared; the later user confirmation is the evidence for correct physical touch.
