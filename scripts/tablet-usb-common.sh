@@ -1,5 +1,5 @@
 #!/bin/bash
-# Funções compartilhadas pelo launcher e supervisor. Sem comandos de impressora.
+# Functions shared by the launcher and supervisor. No printer commands.
 TABLET_SERIAL=${TABLET_SERIAL:-"<DeviceSerialNumber>"}
 TABLET_USER=${TABLET_USER:-"<DeviceUser>"}
 TABLET_HOME=${TABLET_HOME:-"<DeviceHome>"}

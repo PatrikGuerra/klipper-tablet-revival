@@ -1,5 +1,5 @@
 #!/bin/bash
-# Supervisor do painel. Não reinicia Klipper, Moonraker nem o BTT.
+# Panel supervisor. Does not restart Klipper, Moonraker, or the BTT.
 set -u
 source /usr/local/lib/tablet-usb-common.sh
 needs_restart=1
@@ -11,14 +11,14 @@ last_reset=0
 say() { if [[ $last_state != "$1" ]]; then echo "$1"; last_state=$1; fi; }
 while true; do
     if ! tablet_online; then
-        say 'Tablet USB indisponível; aguardando reconexão'
+        say 'Tablet USB unavailable; waiting for reconnection'
         needs_restart=1
         failed=0
         sleep 10
         continue
     fi
     if ! tablet_booted; then
-        say 'Android iniciando; aguardando sys.boot_completed=1'
+        say 'Android is starting; waiting for sys.boot_completed=1'
         needs_restart=1
         sleep 10
         continue
@@ -30,10 +30,10 @@ while true; do
         failed=0
     fi
     tablet_forward || true
-    # Em segundo plano, SDL pode suspender X11: retomar o aplicativo antes
-    # de concluir que o servidor gráfico deixou de responder.
+    # In the background, SDL can suspend X11: resume the app before
+    # concluding that the display server stopped responding.
     if [[ $TABLET_KEEP_FOREGROUND == 1 ]] && ! tablet_foreground; then
-        echo 'Restaurando XSDL em primeiro plano (painel dedicado)'
+        echo 'Restoring XSDL to the foreground (dedicated panel)'
         tablet_open || true
         sleep 2
     fi
@@ -45,27 +45,27 @@ while true; do
             tablet_as_user timeout 5 xset -display "$TABLET_DISPLAY" -dpms 2>/dev/null || true
             if systemctl restart KlipperScreen; then
                 needs_restart=0
-                say "Conexão USB/X11 restabelecida; KlipperScreen reiniciado; boot=$boot"
-                # O primeiro desenho é pesado no Android antigo.
+                say "USB/X11 connection restored; KlipperScreen restarted; boot=$boot"
+                # The first draw is demanding on older Android.
                 sleep 20
             else
-                say 'Falha ao reiniciar KlipperScreen; nova tentativa na próxima verificação'
+                say 'Failed to restart KlipperScreen; retrying on the next check'
             fi
         else
-            say 'Painel USB/X11 disponível'
+            say 'USB/X11 panel available'
         fi
     else
         ((failed+=1))
         if ((failed < 2 && ! needs_restart)); then
-            say 'Consulta X11 lenta; aguardando confirmação antes de recuperar'
+            say 'X11 query is slow; waiting for confirmation before recovery'
             sleep 10
             continue
         fi
         needs_restart=1
-        say 'XSDL indisponível; recuperando o painel'
+        say 'XSDL unavailable; recovering the panel'
         now=$(date +%s)
         if ((failed >= 4 && now-last_reset >= 180)); then
-            echo 'XSDL não respondeu em verificações sucessivas; reabrindo somente o aplicativo'
+            echo 'XSDL did not respond in consecutive checks; reopening only the app'
             tablet_adb shell am force-stop x.org.server || true
             tablet_open || true
             last_reset=$now

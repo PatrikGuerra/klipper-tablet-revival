@@ -1,53 +1,53 @@
-# Qual tablet deu certo?
+# Which tablet worked?
 
-O equipamento validado foi um **NT-1710**, identificado pelo próprio Android. O usuário confirmou que a interface e o toque ficaram funcionando corretamente. Não identificamos com segurança a marca comercial, quantidade de RAM, capacidade total de armazenamento ou versão do fabricante; esses dados não devem ser deduzidos apenas pelo nome do modelo.
+The validated device was an **NT-1710**, identified by Android itself. The user confirmed that the interface and touch worked correctly. The commercial brand, RAM quantity, total storage capacity, and manufacturer version were not identified reliably; do not infer them from the model name alone.
 
-| Característica | Valor confirmado |
+| Characteristic | Confirmed value |
 |---|---|
-| Modelo Android | `NT-1710` |
-| Nome interno do dispositivo | `NT-1710` |
-| Produto | `nuclear_basic` |
+| Android model | `NT-1710` |
+| Internal device name | `NT-1710` |
+| Product | `nuclear_basic` |
 | Android | **4.2.2** |
-| ABI | `armeabi-v7a` — ARM de 32 bits |
-| Identificação USB | `18d1:0003`, descrito pelo Linux como Android/AllWinner |
-| Serial ADB desta unidade | `<DeviceSerialNumber>` — outro exemplar terá seu próprio serial |
-| Superfície Android | 800 × 480 pixels |
-| Superfície do aplicativo/X11 | 800 × 444 pixels, com barra Android ocupando a faixa restante |
-| XServer XSDL que funcionou | **1.11.40** |
-| XServer XSDL que falhou | 1.20.51: APK instalou, servidor X não iniciou |
-| Acesso ADB preexistente | Shell retornou `uid=0(root)`; este projeto não fez root |
-| Toque final | Movimento absoluto e clique normal, sem emulação de touchpad |
-| Calibração SDL | `[0, 0, 0, 0]`, preservada |
+| ABI | `armeabi-v7a` — 32-bit ARM |
+| USB identification | `18d1:0003`, described by Linux as Android/AllWinner |
+| ADB serial for this unit | `<DeviceSerialNumber>` — another unit will have its own serial |
+| Android surface | 800 × 480 pixels |
+| App/X11 surface | 800 × 444 pixels, with the Android bar using the remaining strip |
+| Working XServer XSDL | **1.11.40** |
+| Failed XServer XSDL | 1.20.51: APK installed but the X server did not start |
+| Pre-existing ADB access | Shell returned `uid=0(root)`; this project did not root the device |
+| Final touch | Absolute movement and normal click, without touchpad emulation |
+| SDL calibration | `[0, 0, 0, 0]`, preserved |
 
-O acesso root preexistente foi importante para reparar os arquivos internos do aplicativo. Isso não significa que todo tablet Android 4.2.2 permita os mesmos comandos.
+The pre-existing root access was important for repairing internal application files. This does not mean every Android 4.2.2 tablet allows the same commands.
 
-## Host usado junto com ele
+## Host used with it
 
-BTT Pi/CB1, imagem BTT-CB1 2.3.4, Debian 11 Bullseye ARM64, cerca de 1 GB de RAM. Klipper, Moonraker e KlipperScreen já estavam instalados. Foi utilizado um cabo USB com dados; a alimentação elétrica não foi modificada.
+BTT Pi/CB1, BTT-CB1 2.3.4 image, Debian 11 Bullseye ARM64, about 1 GB of RAM. Klipper, Moonraker, and KlipperScreen were already installed. A data-capable USB cable was used; power was not changed.
 
-## O que foi confirmado na prática
+## What was confirmed in practice
 
-1. Linux reconheceu o tablet USB.
-2. ADB passou a mostrar `device` após ajustar permissões.
-3. O XServer respondeu pelo encaminhamento USB.
-4. KlipperScreen mostrou menus e temperaturas recebidas do Moonraker.
-5. Depois de desativar o modo touchpad, o usuário confirmou o toque correto.
+1. Linux recognized the USB tablet.
+2. ADB showed `device` after permissions were corrected.
+3. The XServer responded through USB forwarding.
+4. KlipperScreen displayed menus and temperatures received from Moonraker.
+5. After disabling touchpad mode, the user confirmed correct touch behavior.
 
-Atualização: foram executados reboots reais do tablet e do BTT, com recuperação automática da interface após instalar o supervisor. Veja [reconexão automática](RECONEXAO.md). Ainda não foram comprovados: retirada física/reconexão do cabo, funcionamento por muitas horas ou teste com Wi-Fi desligado. A conexão gráfica configurada usa USB, mesmo que o Android também esteja no Wi-Fi.
+Update: real tablet and BTT reboots were performed, with automatic interface recovery after installing the supervisor. See [automatic reconnection](RECONEXAO.md). Physical cable removal/reconnection, many-hours operation, and testing with Wi-Fi disabled are still unproven. The configured graphics connection uses USB even if Android is also connected to Wi-Fi.
 
-## Como comparar com o seu tablet
+## How to compare your tablet
 
-No BTT, com ADB instalado e tablet autorizado, execute:
+On the BTT, with ADB installed and the tablet authorized, run:
 
 ```sh
 adb devices -l
-# Substitua SEU_SERIAL pelo valor mostrado na primeira coluna.
-adb -s SEU_SERIAL shell getprop ro.product.model
-adb -s SEU_SERIAL shell getprop ro.product.device
-adb -s SEU_SERIAL shell getprop ro.product.name
-adb -s SEU_SERIAL shell getprop ro.build.version.release
-adb -s SEU_SERIAL shell getprop ro.product.cpu.abi
-adb -s SEU_SERIAL shell id
+# Replace YOUR_SERIAL with the value in the first column.
+adb -s YOUR_SERIAL shell getprop ro.product.model
+adb -s YOUR_SERIAL shell getprop ro.product.device
+adb -s YOUR_SERIAL shell getprop ro.product.name
+adb -s YOUR_SERIAL shell getprop ro.build.version.release
+adb -s YOUR_SERIAL shell getprop ro.product.cpu.abi
+adb -s YOUR_SERIAL shell id
 ```
 
-Se Android, ABI ou permissões forem diferentes, trate como outro ambiente. Use o menu do XSDL para configurar o toque; o patch binário deste projeto é restrito ao perfil testado.
+If Android, ABI, or permissions differ, treat it as a different environment. Use the XSDL menu to configure touch; this repository's binary patch is restricted to the tested profile.

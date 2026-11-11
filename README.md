@@ -1,84 +1,84 @@
 # Klipper Tablet Revival
 
-> **KlipperScreen em um tablet Android 4.2.2, conectado por USB.**
+> **KlipperScreen on an Android 4.2.2 tablet connected via USB.**
 
-Um tablet Android antigo, recuperado como painel touchscreen do KlipperScreen por **USB**.
+An older Android tablet restored as a KlipperScreen touchscreen panel over **USB**.
 
-Validado em 09/11/2026: BTT Pi/CB1 com Debian 11 ARM64 e tablet **NT-1710, Android 4.2.2, ARMv7**. A interface apareceu no tablet e o usuário confirmou que o toque ficou correto após desativar a emulação de touchpad.
+Validated on 2026-11-09: BTT Pi/CB1 with Debian 11 ARM64 and an **NT-1710, Android 4.2.2, ARMv7** tablet. The interface appeared on the tablet and the user confirmed correct touch behavior after disabling touchpad emulation.
 
-![KlipperScreen funcionando no tablet](docs/images/klipperscreen-usb.png)
+![KlipperScreen running on the tablet](docs/images/klipperscreen-usb.png)
 
-## Arquitetura
+## Architecture
 
 ```text
-Klipper + Moonraker → KlipperScreen no BTT Pi
+Klipper + Moonraker → KlipperScreen on the BTT Pi
                               ↓ X11, DISPLAY=:100
                      ADB forward 6100 → 6000
-                              ↓ cabo USB
-                  XServer XSDL 1.11.40 no Android
-                              ↑ toque direto
+                              ↓ USB cable
+                  XServer XSDL 1.11.40 on Android
+                              ↑ direct touch
 ```
 
-SSH é usado para administração. O transporte da interface entre o BTT Pi e o tablet usa ADB/USB. Não é vídeo HDMI nem espelhamento: o tablet renderiza X11, e o KlipperScreen executa no BTT Pi. O tablet estava também conectado ao Wi-Fi; desligar o Wi-Fi para um teste isolado não foi feito nesta sessão.
+SSH is used for administration. The BTT Pi and tablet transport the interface through ADB/USB. This is not HDMI video or mirroring: the tablet renders X11 and KlipperScreen runs on the BTT Pi. The tablet was also connected to Wi-Fi; disabling Wi-Fi for an isolated test was not performed in this session.
 
-## Documentação
+## Documentation
 
-- **Comece aqui:** [guia acompanhado, com comandos e resultados esperados](docs/COMECE_AQUI.md).
-- [Tablet testado e compatibilidade](docs/TABLET_TESTADO.md)
-- [FAQ: problemas encontrados e soluções](docs/FAQ.md)
-- [Como continuar com a ajuda de uma IA](docs/CONTINUAR_COM_IA.md)
-- [Instalação e reprodução passo a passo](docs/INSTALACAO.md)
-- [Histórico real, versões e evidências](docs/HISTORICO.md)
-- [Touch: diagnóstico e correção](docs/TOUCH.md)
-- [Diagnóstico, manutenção e rollback](docs/MANUTENCAO.md)
-- [Referências e procedência dos arquivos](docs/REFERENCIAS.md)
-- [Validação dos scripts e evidências](docs/VALIDACAO.md)
-- [Reconexão automática testada](docs/RECONEXAO.md)
-- [Roteiro original de planejamento](docs/REFERENCIA_ORIGINAL.md)
+- **Start here:** [guided walkthrough with commands and expected results](docs/COMECE_AQUI.md).
+- [Tested tablet and compatibility](docs/TABLET_TESTADO.md)
+- [FAQ: issues found and solutions](docs/FAQ.md)
+- [How to continue with AI assistance](docs/CONTINUAR_COM_IA.md)
+- [Installation and step-by-step reproduction](docs/INSTALACAO.md)
+- [Actual history, versions, and evidence](docs/HISTORICO.md)
+- [Touch: diagnosis and correction](docs/TOUCH.md)
+- [Diagnosis, maintenance, and rollback](docs/MANUTENCAO.md)
+- [References and file provenance](docs/REFERENCIAS.md)
+- [Script validation and evidence](docs/VALIDACAO.md)
+- [Tested automatic reconnection](docs/RECONEXAO.md)
+- [Original planning reference](docs/REFERENCIA_ORIGINAL.md)
 
-## Arquivos executáveis e configuração
+## Executable files and configuration
 
-| Arquivo | Uso |
+| File | Purpose |
 |---|---|
-| `scripts/launch_KlipperScreen.sh` | Launcher da etapa inicial, baseado no exemplo oficial; preservado como referência |
-| `scripts/diagnostico.sh` | Inspeção do sistema, ADB e X11, sem instalação nem comandos de impressora |
-| `scripts/patch_touch.py` | Corrige somente clique e movimento relativo no formato Java do XSDL validado; gera outro arquivo |
-| `scripts/launch_KlipperScreen-autoconnect.sh` | Launcher atual com espera por Android/X11 e consultas com timeout |
-| `scripts/tablet-usb-watchdog.sh` | Supervisor de recuperação do painel, iniciado pelo systemd |
-| `scripts/tablet-usb-common.sh` | Funções ADB/X11 compartilhadas, selecionando somente o tablet |
-| `config/70-btt-tablet-adb.rules` | Permissão USB exclusiva para o VID/PID observado |
-| `checksums.sha256` | Hashes observados dos downloads oficiais |
+| `scripts/launch_KlipperScreen.sh` | Initial-stage launcher based on the official example; kept as a reference |
+| `scripts/diagnostico.sh` | System, ADB, and X11 inspection without installation or printer commands |
+| `scripts/patch_touch.py` | Changes only click and relative movement in the validated XSDL Java format; creates a separate file |
+| `scripts/launch_KlipperScreen-autoconnect.sh` | Current launcher with Android/X11 waiting and timed queries |
+| `scripts/tablet-usb-watchdog.sh` | Panel recovery supervisor started by systemd |
+| `scripts/tablet-usb-common.sh` | Shared ADB/X11 functions that select only the tablet |
+| `config/70-btt-tablet-adb.rules` | USB permission limited to the observed VID/PID |
+| `checksums.sha256` | Observed hashes of official downloads |
 
-Não há instalador único: a execução por etapas permite conferir cada resultado. Depois da configuração, o supervisor recupera automaticamente o painel. Não foram incluídos senhas, tokens, APKs, backups do sistema ou configurações da impressora. Os binários devem ser obtidos das fontes oficiais.
+There is no single installer: running the steps independently makes every result verifiable. After configuration, the supervisor automatically recovers the panel. Passwords, tokens, APKs, system backups, and printer configuration were not included. Obtain binaries from official sources.
 
-## Resultado e limites
+## Result and limits
 
-- ADB autorizado, XSDL respondendo via USB, KlipperScreen conectado ao Moonraker.
-- Toque direto confirmado pelo usuário; descanso do X11 desativado durante a sessão.
-- Webcam Microsoft permaneceu intacta.
-- Nenhum movimento de eixo, extrusão ou aquecimento foi acionado pelo agente.
-- Reboots reais do tablet e do BTT testados: interface recuperada automaticamente. [Veja o procedimento e os limites](docs/RECONEXAO.md).
-- Supervisor habilitado no boot, com recuperação de ADB/XSDL e reconexão do KlipperScreen.
-- Desconexão física do cabo e teste prolongado ainda não validados. Falhas de alimentação ou depuração USB desativada exigem intervenção.
+- ADB authorized, XSDL responding over USB, and KlipperScreen connected to Moonraker.
+- Direct touch confirmed by the user; X11 screen blanking was disabled during the session.
+- The Microsoft webcam remained untouched.
+- The agent did not trigger axis movement, extrusion, or heating.
+- Real tablet and BTT reboots were tested: the interface recovered automatically. [See the procedure and limits](docs/RECONEXAO.md).
+- The supervisor is enabled at boot and recovers ADB/XSDL and the KlipperScreen connection.
+- Physical USB-cable disconnection and long-duration testing are still unvalidated. Power failures or disabled USB debugging require intervention.
 
-## Créditos
+## Credits
 
-Este resultado só foi possível pelo trabalho dos projetos abaixo:
+This result was made possible by the work of these projects:
 
-| Projeto | Contribuição para esta solução |
+| Project | Contribution to this solution |
 |---|---|
-| [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen) | Interface e exemplo oficial de launcher Android/ADB que adaptamos |
-| [SDL Android / XServer XSDL, de pelya e colaboradores](https://github.com/pelya/commandergenius) | Servidor gráfico Android e código usado para entender o toque e os downloads |
-| [Klipper](https://github.com/Klipper3d/klipper) | Firmware/ecossistema da impressora controlada |
-| [Moonraker](https://github.com/Arksine/moonraker) | API que conecta o KlipperScreen à impressora |
-| [Android Platform Tools / ADB](https://developer.android.com/tools/adb) | Comunicação USB e encaminhamento das conexões X11 |
+| [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen) | Interface and official Android/ADB launcher example adapted here |
+| [SDL Android / XServer XSDL, by pelya and contributors](https://github.com/pelya/commandergenius) | Android display server and code used to understand touch and downloads |
+| [Klipper](https://github.com/Klipper3d/klipper) | Firmware/ecosystem for the controlled printer |
+| [Moonraker](https://github.com/Arksine/moonraker) | API connecting KlipperScreen to the printer |
+| [Android Platform Tools / ADB](https://developer.android.com/tools/adb) | USB communication and X11 connection forwarding |
 
-Obrigado aos mantenedores e colaboradores desses projetos. Nossa contribuição aqui é registrar a integração, os ajustes e as evidências deste hardware. Os projetos originais mantêm seus direitos e licenças.
+Thanks to the maintainers and contributors of these projects. Our contribution is recording the integration, adjustments, and evidence for this hardware. The original projects retain their rights and licenses.
 
-## Para quem quer reproduzir
+## For reproduction
 
-Você pode seguir o guia manualmente ou entregá-lo a uma IA com ferramentas de terminal, acesso SSH autorizado ao BTT e acesso ADB ao tablet. [O roteiro para IA](docs/CONTINUAR_COM_IA.md) explica o contexto e os pontos de verificação. A IA precisa conferir as respostas do seu equipamento; ter o guia não garante compatibilidade com todo tablet.
+You can follow the guide manually or give it to an AI with terminal tools, authorized SSH access to the BTT, and ADB access to the tablet. [The AI guide](docs/CONTINUAR_COM_IA.md) explains the context and verification points. The AI must verify responses from your own hardware; having the guide does not guarantee compatibility with every tablet.
 
-Tópicos do repositório ajudam a organizar o projeto. Enquanto ele permanecer privado, somente quem tiver acesso poderá encontrá-lo e ler seu conteúdo.
+Repository topics help organize the project. While it remains private, only users with access can find and read its content.
 
-Scripts baseados em projetos externos mantêm a procedência indicada em [Referências](docs/REFERENCIAS.md). Este repositório documenta uma instalação específica; não reivindica autoria do KlipperScreen ou XServer XSDL.
+Scripts based on external projects retain the provenance listed in [References](docs/REFERENCIAS.md). This repository documents a specific installation; it does not claim authorship of KlipperScreen or XServer XSDL.

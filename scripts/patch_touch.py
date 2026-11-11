@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Patch mínimo do libsdl-settings.cfg validado com XSDL 1.11.40.
+"""Minimal libsdl-settings.cfg patch validated with XSDL 1.11.40.
 
-Lê blocos primitivos Java ObjectOutputStream, exige layout conhecido e cria
-outro arquivo sem sobrescrever entrada/saída existente. Não executa ADB.
-Baseado no layout Settings.java e nas opções de SettingsMenuMouse.java do
-projeto pelya/commandergenius. Veja docs/TOUCH.md.
+Reads primitive Java ObjectOutputStream blocks, requires a known layout, and creates
+another file without overwriting an existing input/output file. Does not run ADB.
+Based on the Settings.java layout and SettingsMenuMouse.java options from the
+pelya/commandergenius project. See docs/TOUCH.md.
 """
 import argparse
 import io
@@ -14,7 +14,7 @@ from pathlib import Path
 
 def patch(raw):
     if raw[:4] != b"\xac\xed\x00\x05":
-        raise ValueError("Cabeçalho Java inesperado")
+        raise ValueError("Unexpected Java header")
     data, positions = bytearray(), []
     k = 4
     while k < len(raw):
@@ -27,15 +27,15 @@ def patch(raw):
             n = raw[k]
             k += 1
         else:
-            raise ValueError("Objeto Java fora do formato validado")
+            raise ValueError("Java object is outside the validated format")
         if n > len(raw) - k:
-            raise ValueError("Bloco truncado")
+            raise ValueError("Truncated block")
         positions.extend(range(k, k + n))
         data.extend(raw[k:k + n])
         k += n
-    # Perfil específico observado: recusar outros layouts em vez de adivinhar.
+    # Specific observed profile: reject other layouts instead of guessing.
     if len(data) != 1538:
-        raise ValueError("Tamanho diferente do perfil validado (1538 bytes)")
+        raise ValueError("Size differs from the validated profile (1538 bytes)")
     s = io.BytesIO(data)
 
     def integer():
@@ -43,11 +43,11 @@ def patch(raw):
 
     def skip(n):
         if n < 0 or n > len(data) - s.tell():
-            raise ValueError("Comprimento inválido")
+            raise ValueError("Invalid length")
         s.read(n)
 
     if integer() != 5:
-        raise ValueError("Versão do arquivo diferente de 5")
+        raise ValueError("File version differs from 5")
     skip(5 + 24)
     right, zoom = integer(), integer()
     click_offset = s.tell()
@@ -55,35 +55,35 @@ def patch(raw):
     skip(2 + 8 + 1 + 8)
     for width in (4, 4, 1):
         skip(integer() * width)
-    integer()  # transparência do teclado
-    skip(integer() * 5)  # gestos: int + bool
-    integer()  # sensibilidade dos gestos
+    integer()  # keyboard transparency
+    skip(integer() * 5)  # gestures: int + bool
+    integer()  # gesture sensitivity
     calibration = [integer() for _ in range(4)]
     for _ in range(2):
-        skip(integer() * 2)  # strings UTF-16
-    skip(integer() * 16)  # retângulos do teclado
+        skip(integer() * 2)  # UTF-16 strings
+    skip(integer() * 16)  # keyboard rectangles
     skip(4 + 4 + 1 + 4 + 4)
     relative_offset = s.tell()
     relative = s.read(1)[0]
     if (click_offset, relative_offset) != (41, 1457):
-        raise ValueError("Offsets diferentes do perfil validado")
+        raise ValueError("Offsets differ from the validated profile")
     if click not in (0, 7) or relative not in (0, 1) or zoom != 0:
-        raise ValueError("Modo diferente do observado; use os menus do XSDL")
+        raise ValueError("Mode differs from the observed one; use the XSDL menus")
     out = bytearray(raw)
     for i in range(click_offset, click_offset + 4):
         out[positions[i]] = 0  # LEFT_CLICK_NORMAL
-    out[positions[relative_offset]] = 0  # movimento absoluto
-    print(f"Clique {click}->0; relativo {relative}->0; calibração preservada {calibration}; botão direito {right}")
+    out[positions[relative_offset]] = 0  # absolute movement
+    print(f"Click {click}->0; relative {relative}->0; preserved calibration {calibration}; right button {right}")
     return bytes(out)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("entrada", type=Path)
-    parser.add_argument("saida", type=Path)
+    parser.add_argument("input", type=Path)
+    parser.add_argument("output", type=Path)
     args = parser.parse_args()
-    output = patch(args.entrada.read_bytes())
-    with args.saida.open("xb") as handle:
+    output = patch(args.input.read_bytes())
+    with args.output.open("xb") as handle:
         handle.write(output)
 
 

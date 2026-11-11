@@ -1,6 +1,6 @@
 #!/bin/bash
-# Uso: bash scripts/diagnostico.sh [serial-adb]
-# A consulta ADB pode iniciar o daemon local; não modifica o Android.
+# Usage: bash scripts/diagnostico.sh [adb-serial]
+# The ADB query can start the local daemon; it does not modify Android.
 serial=${1:-"<DeviceSerialNumber>"}
 cat /etc/os-release
 uname -m

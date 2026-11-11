@@ -1,5 +1,5 @@
 #!/bin/bash
-# Substituto do launcher inicial: cada consulta tem timeout.
+# Replacement for the initial launcher: every query has a timeout.
 set -u
 source /usr/local/lib/tablet-usb-common.sh
 while true; do
@@ -13,6 +13,6 @@ done
 tablet_as_user timeout 5 xset -display "$TABLET_DISPLAY" s off || true
 tablet_as_user timeout 5 xset -display "$TABLET_DISPLAY" -dpms 2>/dev/null || true
 export DISPLAY="$TABLET_DISPLAY"
-# KS_XCLIENT é definido pela unidade original do KlipperScreen.
-if [[ -z ${KS_XCLIENT:-} ]]; then echo 'KS_XCLIENT ausente' >&2; exit 1; fi
+# KS_XCLIENT is set by the original KlipperScreen unit.
+if [[ -z ${KS_XCLIENT:-} ]]; then echo 'KS_XCLIENT missing' >&2; exit 1; fi
 exec $KS_XCLIENT

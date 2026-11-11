@@ -1,6 +1,6 @@
 #!/bin/bash
-# Adaptado de KlipperScreen/scripts/sample-android-adb.sh.
-# Snapshot funcional desta instalação. Ajuste o serial para outro tablet.
+# Adapted from KlipperScreen/scripts/sample-android-adb.sh.
+# Working snapshot of this installation. Change the serial for another tablet.
 export ANDROID_SERIAL="<DeviceSerialNumber>"
 # forward local display :100 to remote display :0
 adb forward tcp:6100 tcp:6000
