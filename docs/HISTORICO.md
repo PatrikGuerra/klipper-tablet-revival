@@ -20,7 +20,7 @@ Date: 2026-11-09, America/Sao_Paulo. This record separates observed results from
 ## What actually happened
 
 1. The original plan was treated as a reference, not run blindly. `btt.local` did not resolve; the owner-provided IP allowed SSH.
-2. Read-only USB inspection found the tablet, a Microsoft LifeCam VX-500 webcam and a Kingston flash drive. The latter two were not changed.
+2. Read-only USB inspection confirmed the tablet was connected.
 3. ADB was missing and installed from Debian packages without a general upgrade. The tablet appeared as `no permissions`. A device-specific `18d1:0003` udev rule (`0660`, `plugdev`) fixed permissions; restarting the ADB daemon cleared its stale state. A first rule write lost quotes across shells and was corrected.
 4. Official XSDL 1.20.51 installed but reported `X server failed to launch`. Version 1.11.40, cited by the KlipperScreen Android guide for Android 4, was installed with `-r -d`, retaining incompatible data. New installations should **start with 1.11.40** on this hardware.
 5. The old Android could not negotiate the font download's HTTPS redirect. The BTT downloaded official fonts and transferred them through ADB. Copying only the archive did not work; extracting to external storage failed on symbolic links. Fonts were placed in the internal app directory. Extraction was interrupted after a long wait; the resulting tree worked, but complete font integrity was not audited.

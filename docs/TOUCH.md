@@ -48,4 +48,4 @@ Replace `APP_OWNER` with the observed numeric UID:GID; do not use the literal sa
 
 ## Undo only the touch change
 
-Stop KlipperScreen and XSDL, push `touch-settings-before.cfg` from the unique backup directory, restore the real app owner, then restart XSDL and the service. That private backup lives on the BTT, not in this repository.
+Stop KlipperScreen and XSDL, push `touch-settings-before.cfg` from the unique backup directory, restore the real app owner, then restart XSDL and the service. That backup lives on the BTT, not in this repository.

@@ -48,7 +48,6 @@ There is no one-shot installer: each step has a result you can verify. The scrip
 
 - ADB authorized, XSDL responding over USB, and KlipperScreen connected to Moonraker.
 - Direct touch confirmed by the user; X11 screen blanking was disabled during the session.
-- The Microsoft webcam remained untouched.
 - The agent did not trigger axis movement, extrusion, or heating.
 - Real tablet and BTT reboots were tested: the interface recovered automatically. [See the procedure and limits](docs/RECONEXAO.md).
 - The supervisor is enabled at boot and recovers ADB/XSDL and the KlipperScreen connection.

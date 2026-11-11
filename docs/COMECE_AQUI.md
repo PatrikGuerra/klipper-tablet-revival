@@ -4,7 +4,7 @@ The BTT runs KlipperScreen; the Android tablet displays its X11 interface and re
 
 ## Before you begin
 
-You need a BTT with Klipper, Moonraker and KlipperScreen already running. If KlipperScreen is missing, follow its [official installation guide](https://klipperscreen.readthedocs.io/en/latest/Installation/) first. You also need an Android tablet, a data-capable USB cable, SSH/sudo access to the BTT, and access to this repository (GitHub authorization may be required while it is private). Unlock the tablet when asked.
+You need a BTT with Klipper, Moonraker and KlipperScreen already running. If KlipperScreen is missing, follow its [official installation guide](https://klipperscreen.readthedocs.io/en/latest/Installation/) first. You also need an Android tablet, a data-capable USB cable, SSH/sudo access to the BTT, and access to this repository. Unlock the tablet when asked.
 
 `<DeviceUser>`, `<DeviceHostIp>` and `<DeviceSerialNumber>` are redacted values from the tested setup. Use **your** device's values. Keep the same SSH session through the steps below; if you reconnect, set `TABLET_SERIAL` again.
 

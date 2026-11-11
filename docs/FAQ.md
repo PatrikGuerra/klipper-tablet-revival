@@ -19,4 +19,4 @@ Follow the [main guide](COMECE_AQUI.md) first. Use this page to choose the next 
 | Is Wi-Fi needed for the image? | The configured transport is ADB/USB; SSH uses the network only to administer the BTT. The tablet's Wi-Fi was on, so an isolated Wi-Fi-off test remains open. |
 | Does it reconnect automatically? | Tablet and BTT reboots passed with the [supervisor](RECONEXAO.md). Physical cable removal, power loss, PIN locks, disabled debugging and revoked authorization are untested/not automatically fixed. |
 
-The [tested NT-1710](TABLET_TESTADO.md) is a confirmed example, not a universal compatibility guarantee. A private repository is readable only to people with access, regardless of its topics.
+The [tested NT-1710](TABLET_TESTADO.md) is a confirmed example, not a universal compatibility guarantee.
