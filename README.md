@@ -68,10 +68,3 @@ This result was made possible by the work of these projects:
 
 Thanks to the maintainers and contributors of these projects. Our contribution is recording the integration, adjustments, and evidence for this hardware. The original projects retain their rights and licenses.
 
-## For reproduction
-
-You can follow the guide manually or give it to an AI with terminal tools, authorized SSH access to the BTT, and ADB access to the tablet. [The AI guide](docs/CONTINUAR_COM_IA.md) explains the context and verification points. The AI must verify responses from your own hardware; having the guide does not guarantee compatibility with every tablet.
-
-Repository topics help organize the project. While it remains private, only users with access can find and read its content.
-
-Scripts based on external projects retain the provenance listed in [References](docs/REFERENCIAS.md). This repository documents a specific installation; it does not claim authorship of KlipperScreen or XServer XSDL.
