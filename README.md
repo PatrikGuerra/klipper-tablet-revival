@@ -68,10 +68,3 @@ Este resultado só foi possível pelo trabalho dos projetos abaixo:
 
 Obrigado aos mantenedores e colaboradores desses projetos. Nossa contribuição aqui é registrar a integração, os ajustes e as evidências deste hardware. Os projetos originais mantêm seus direitos e licenças.
 
-## Para quem quer reproduzir
-
-Você pode seguir o guia manualmente ou entregá-lo a uma IA com ferramentas de terminal, acesso SSH autorizado ao BTT e acesso ADB ao tablet. [O roteiro para IA](docs/CONTINUAR_COM_IA.md) explica o contexto e os pontos de verificação. A IA precisa conferir as respostas do seu equipamento; ter o guia não garante compatibilidade com todo tablet.
-
-Tópicos do repositório ajudam a organizar o projeto. Enquanto ele permanecer privado, somente quem tiver acesso poderá encontrá-lo e ler seu conteúdo.
-
-Scripts baseados em projetos externos mantêm a procedência indicada em [Referências](docs/REFERENCIAS.md). Este repositório documenta uma instalação específica; não reivindica autoria do KlipperScreen ou XServer XSDL.
