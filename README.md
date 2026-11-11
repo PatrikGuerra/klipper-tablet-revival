@@ -21,20 +21,13 @@ Klipper + Moonraker → KlipperScreen on the BTT Pi
 
 SSH is used for administration. The BTT Pi and tablet transport the interface through ADB/USB. This is not HDMI video or mirroring: the tablet renders X11 and KlipperScreen runs on the BTT Pi. The tablet was also connected to Wi-Fi; disabling Wi-Fi for an isolated test was not performed in this session.
 
-## Documentation
+## Para reproduzir
 
-- **Start here:** [guided walkthrough with commands and expected results](docs/COMECE_AQUI.md).
-- [Tested tablet and compatibility](docs/TABLET_TESTADO.md)
-- [FAQ: issues found and solutions](docs/FAQ.md)
-- [How to continue with AI assistance](docs/CONTINUAR_COM_IA.md)
-- [Installation and step-by-step reproduction](docs/INSTALACAO.md)
-- [Actual history, versions, and evidence](docs/HISTORICO.md)
-- [Touch: diagnosis and correction](docs/TOUCH.md)
-- [Diagnosis, maintenance, and rollback](docs/MANUTENCAO.md)
-- [References and file provenance](docs/REFERENCIAS.md)
-- [Script validation and evidence](docs/VALIDACAO.md)
-- [Tested automatic reconnection](docs/RECONEXAO.md)
-- [Original planning reference](docs/REFERENCIA_ORIGINAL.md)
+1. Siga o [guia principal](docs/COMECE_AQUI.md) para chegar à primeira imagem e testar o toque.
+2. Se algo falhar, escolha o sintoma na [FAQ](docs/FAQ.md). Os [reparos avançados](docs/INSTALACAO.md) são apenas para erros específicos e alguns exigem root preexistente.
+3. Com a interface funcionando, instale a [reconexão automática](docs/RECONEXAO.md), se desejar.
+
+Referência: [tablet testado](docs/TABLET_TESTADO.md), [toque](docs/TOUCH.md), [diagnóstico e rollback](docs/MANUTENCAO.md), [evidências históricas](docs/HISTORICO.md), [validação](docs/VALIDACAO.md), [procedência](docs/REFERENCIAS.md) e [roteiro para IA](docs/CONTINUAR_COM_IA.md).
 
 ## Executable files and configuration
 
@@ -49,7 +42,7 @@ SSH is used for administration. The BTT Pi and tablet transport the interface th
 | `config/70-btt-tablet-adb.rules` | USB permission limited to the observed VID/PID |
 | `checksums.sha256` | Observed hashes of official downloads |
 
-There is no single installer: running the steps independently makes every result verifiable. After configuration, the supervisor automatically recovers the panel. Passwords, tokens, APKs, system backups, and printer configuration were not included. Obtain binaries from official sources.
+Não há instalador único: a execução por etapas permite conferir cada resultado. Os scripts **exigem configurar serial, usuário e diretório reais**; valores `<Device...>` são apenas marcadores e fazem os launchers falharem de forma explícita. Não foram incluídos senhas, tokens, APKs, backups do sistema ou configurações da impressora. Obtenha binários das fontes oficiais.
 
 ## Result and limits
 

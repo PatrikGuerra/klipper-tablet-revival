@@ -11,7 +11,7 @@ Você precisa de:
 - Acesso SSH ao BTT, senha/sudo quando necessário e possibilidade de desbloquear o Android.
 - Acesso a este repositório. Ele é privado: o GitHub deve autorizar sua conta.
 
-Neste projeto foram usados `<DeviceUser>`, `<DeviceHostIp>` e o serial `<DeviceSerialNumber>`. **Troque pelos valores do seu equipamento.** Não digite literalmente textos como `SEU_SERIAL` ou `IP_DO_BTT`.
+Os valores `<DeviceUser>`, `<DeviceHostIp>` e `<DeviceSerialNumber>` representam dados removidos desta publicação. Use os valores do **seu** equipamento. Mantenha o mesmo terminal SSH durante as etapas; se reconectar, redefina `TABLET_SERIAL`.
 
 ### Onde cada coisa acontece
 
@@ -26,7 +26,9 @@ Neste projeto foram usados `<DeviceUser>`, `<DeviceHostIp>` e o serial `<DeviceS
 **No computador:**
 
 ```sh
-ssh <DeviceUser>@IP_DO_BTT
+BTT_USER='seu-usuario'
+BTT_HOST='ip-do-btt'
+ssh "$BTT_USER@$BTT_HOST"
 ```
 
 **Já dentro do BTT:**
@@ -66,7 +68,11 @@ Depois:
 adb devices -l
 ```
 
-**Confira:** copie o serial e procure `device`. Para `unauthorized`, aceite a autorização na tela. Para `no permissions`, vá à etapa seguinte. Se a lista estiver vazia, veja a [FAQ](FAQ.md) antes de instalar outros programas.
+**Confira:** copie o serial e procure `device`. Para `unauthorized`, aceite a autorização na tela. Para `no permissions`, vá à etapa seguinte. Se a lista estiver vazia, veja a [FAQ](FAQ.md) antes de instalar outros programas. No terminal do BTT, defina o serial exibido:
+
+```sh
+TABLET_SERIAL='serial-exibido-pelo-adb'
+```
 
 ## 3. Corrija permissões somente se necessário
 
@@ -81,11 +87,15 @@ ls -l /etc/udev/rules.d/70-btt-tablet-adb.rules
 Se o arquivo já existir, preserve uma cópia antes de substituí-lo:
 
 ```sh
-mkdir -p ~/tablet-xsdl/backups
-sudo cp /etc/udev/rules.d/70-btt-tablet-adb.rules ~/tablet-xsdl/backups/70-btt-tablet-adb.rules.before
+mkdir -p ~/tablet-xsdl
+backup_dir=$(mktemp -d "$HOME/tablet-xsdl/backup.XXXXXXXX")
+if [ -e /etc/udev/rules.d/70-btt-tablet-adb.rules ]; then
+    sudo cp /etc/udev/rules.d/70-btt-tablet-adb.rules "$backup_dir/"
+fi
+echo "Backup: $backup_dir"
 ```
 
-Se ele não existir, pule esse `cp`. Então:
+Então:
 
 ```sh
 sudo install -m 0644 config/70-btt-tablet-adb.rules /etc/udev/rules.d/70-btt-tablet-adb.rules
@@ -117,11 +127,11 @@ sha256sum ~/tablet-xsdl/XServer-XSDL-1.11.40.apk
 Se o app ainda não estiver instalado:
 
 ```sh
-adb -s SEU_SERIAL install ~/tablet-xsdl/XServer-XSDL-1.11.40.apk
-adb -s SEU_SERIAL shell am start -n x.org.server/.MainActivity
+adb -s "$TABLET_SERIAL" install ~/tablet-xsdl/XServer-XSDL-1.11.40.apk
+adb -s "$TABLET_SERIAL" shell am start -n x.org.server/.MainActivity
 ```
 
-**Confira:** a instalação deve mostrar `Success`. O app pode precisar extrair/baixar dados na primeira abertura. Aguarde. Se mostrar erro de fontes/HTTPS, siga a seção **Fontes e Android com TLS antigo** de [INSTALACAO.md](INSTALACAO.md#4-fontes-e-android-com-tls-antigo). Se uma versão mais nova já estiver instalada, não faça downgrade às cegas: veja a FAQ e preserve os dados primeiro.
+**Confira:** a instalação deve mostrar `Success`. O app pode precisar extrair/baixar dados na primeira abertura. Aguarde. Se mostrar erro de fontes/HTTPS, veja [reparos específicos](INSTALACAO.md#fontes-e-android-com-tls-antigo). Se uma versão mais nova já estiver instalada, não faça downgrade às cegas: preserve os dados primeiro.
 
 ## 5. Escolha toque direto
 
@@ -134,7 +144,7 @@ Se o menu não resolver no perfil exato testado, [TOUCH.md](TOUCH.md) contém o 
 **No BTT, com XSDL aberto:**
 
 ```sh
-adb -s SEU_SERIAL forward tcp:6100 tcp:6000
+adb -s "$TABLET_SERIAL" forward tcp:6100 tcp:6000
 timeout 8 xset -display :100 -q
 ```
 
@@ -161,10 +171,14 @@ ls -l ~/KlipperScreen/scripts/launch_KlipperScreen.sh
 Se já existir, copie para backup antes de continuar:
 
 ```sh
-cp ~/KlipperScreen/scripts/launch_KlipperScreen.sh ~/tablet-xsdl/backups/launch_KlipperScreen.before.sh
+backup_dir=$(mktemp -d "$HOME/tablet-xsdl/backup.XXXXXXXX")
+if [ -e "$HOME/KlipperScreen/scripts/launch_KlipperScreen.sh" ]; then
+    cp "$HOME/KlipperScreen/scripts/launch_KlipperScreen.sh" "$backup_dir/"
+fi
+echo "Backup: $backup_dir"
 ```
 
-Se não existir, pule esse `cp`. Copie e edite o serial:
+Copie e edite o serial:
 
 ```sh
 install -m 0755 scripts/launch_KlipperScreen.sh ~/KlipperScreen/scripts/launch_KlipperScreen.sh

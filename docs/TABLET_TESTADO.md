@@ -41,13 +41,13 @@ On the BTT, with ADB installed and the tablet authorized, run:
 
 ```sh
 adb devices -l
-# Replace YOUR_SERIAL with the value in the first column.
-adb -s YOUR_SERIAL shell getprop ro.product.model
-adb -s YOUR_SERIAL shell getprop ro.product.device
-adb -s YOUR_SERIAL shell getprop ro.product.name
-adb -s YOUR_SERIAL shell getprop ro.build.version.release
-adb -s YOUR_SERIAL shell getprop ro.product.cpu.abi
-adb -s YOUR_SERIAL shell id
+TABLET_SERIAL='serial-exibido-pelo-adb'
+adb -s "$TABLET_SERIAL" shell getprop ro.product.model
+adb -s "$TABLET_SERIAL" shell getprop ro.product.device
+adb -s "$TABLET_SERIAL" shell getprop ro.product.name
+adb -s "$TABLET_SERIAL" shell getprop ro.build.version.release
+adb -s "$TABLET_SERIAL" shell getprop ro.product.cpu.abi
+adb -s "$TABLET_SERIAL" shell id
 ```
 
 If Android, ABI, or permissions differ, treat it as a different environment. Use the XSDL menu to configure touch; this repository's binary patch is restricted to the tested profile.
