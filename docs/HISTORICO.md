@@ -23,7 +23,7 @@ Data: 09/11/2026, fuso America/Sao_Paulo. Este registro distingue resultados obs
 
 1. Leitura do roteiro original como referência, sem executar cegamente suas instruções.
 2. Tentativa de SSH por `btt.local` falhou na resolução. O IP informado pelo usuário permitiu o acesso.
-3. Inspeção somente de leitura confirmou três periféricos USB: tablet, webcam Microsoft LifeCam VX-500 e pendrive Kingston. Não houve alteração nos dois últimos.
+3. Inspeção somente de leitura confirmou o tablet conectado por USB.
 4. ADB estava ausente; instalado com dependências pelos repositórios Debian. Não foi feito upgrade geral.
 5. Tablet detectado, mas `no permissions`. A primeira escrita da regra perdeu aspas na passagem entre shells e foi corrigida. Foi aplicada a regra exclusiva `18d1:0003`, modo 0660, grupo plugdev. Após reiniciar o daemon ADB, estado `device`.
 6. XSDL 1.20.51, obtido no SourceForge oficial, instalou com sucesso. Ao abrir, exibiu `X server failed to launch`.

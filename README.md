@@ -48,7 +48,6 @@ Não há instalador único: a execução por etapas permite conferir cada result
 
 - ADB autorizado, XSDL respondendo via USB, KlipperScreen conectado ao Moonraker.
 - Toque direto confirmado pelo usuário; descanso do X11 desativado durante a sessão.
-- Webcam Microsoft permaneceu intacta.
 - Nenhum movimento de eixo, extrusão ou aquecimento foi acionado pelo agente.
 - Reboots reais do tablet e do BTT testados: interface recuperada automaticamente. [Veja o procedimento e os limites](docs/RECONEXAO.md).
 - Supervisor habilitado no boot, com recuperação de ADB/XSDL e reconexão do KlipperScreen.

@@ -13,7 +13,7 @@ Esta etapa mantém o tablet conectado ao KlipperScreen após reiniciar o Android
 
 O launcher novo está no repositório como `scripts/launch_KlipperScreen-autoconnect.sh`; o launcher inicial permanece documentado como referência.
 
-O supervisor roda como root para reiniciar **somente KlipperScreen**, mas executa ADB/X11 com o usuário `<DeviceUser>` por `setpriv`. Não abre ADB pela rede, não altera regras da webcam e não envia G-code.
+O supervisor roda como root para reiniciar **somente KlipperScreen**, mas executa ADB/X11 com o usuário `<DeviceUser>` por `setpriv`. Não abre ADB pela rede, não altera regras de outros dispositivos USB e não envia G-code.
 
 ### Recuperação
 

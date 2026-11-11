@@ -9,7 +9,7 @@ Você precisa de:
 - BTT com Klipper, Moonraker e KlipperScreen já funcionando. Se o último estiver ausente, faça primeiro a [instalação oficial](https://klipperscreen.readthedocs.io/en/latest/Installation/).
 - Tablet Android compatível e cabo USB que transmita dados.
 - Acesso SSH ao BTT, senha/sudo quando necessário e possibilidade de desbloquear o Android.
-- Acesso a este repositório. Ele é privado: o GitHub deve autorizar sua conta.
+- Acesso a este repositório.
 
 Os valores `<DeviceUser>`, `<DeviceHostIp>` e `<DeviceSerialNumber>` representam dados removidos desta publicação. Use os valores do **seu** equipamento. Mantenha o mesmo terminal SSH durante as etapas; se reconectar, redefina `TABLET_SERIAL`.
 
@@ -41,7 +41,7 @@ systemctl is-active klipper moonraker KlipperScreen
 lsusb
 ```
 
-**Confira:** os três serviços devem aparecer como `active`, e `lsusb` deve identificar o Android. No hardware testado, o tablet é `18d1:0003`. Se não for esse VID/PID, não aplique a regra USB deste projeto sem adaptar. Não altere outros periféricos, discos ou webcam.
+**Confira:** os três serviços devem aparecer como `active`, e `lsusb` deve identificar o Android. No hardware testado, o tablet é `18d1:0003`. Se não for esse VID/PID, não aplique a regra USB deste projeto sem adaptar. Não altere outros dispositivos USB.
 
 Se `git clone` pedir autenticação, use sua forma habitual de acesso ao GitHub. Não coloque tokens dentro de scripts ou URLs salvas. Se a pasta já existir, entre nela e confira `git status`; não clone por cima.
 

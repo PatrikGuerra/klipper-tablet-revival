@@ -19,4 +19,4 @@ Siga primeiro o [guia principal](COMECE_AQUI.md). Esta página ajuda a escolher 
 | Preciso de Wi-Fi para a imagem? | O transporte configurado é ADB/USB; SSH usa rede só para administrar o BTT. O tablet estava com Wi-Fi ligado, então o teste isolado com Wi-Fi desligado ainda falta. |
 | Reconecta sozinho? | Reboots do tablet e BTT passaram com o [supervisor](RECONEXAO.md). Remoção física do cabo, falta de energia, PIN, depuração desativada e autorização revogada não foram validados/recuperados automaticamente. |
 
-O [NT-1710 testado](TABLET_TESTADO.md) é um exemplo confirmado, não uma garantia de compatibilidade universal. Repositório privado só é legível por quem tem acesso, independentemente das tags.
+O [NT-1710 testado](TABLET_TESTADO.md) é um exemplo confirmado, não uma garantia de compatibilidade universal.
