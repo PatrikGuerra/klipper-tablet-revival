@@ -21,20 +21,13 @@ Klipper + Moonraker → KlipperScreen no BTT Pi
 
 SSH é usado para administração. O transporte da interface entre o BTT Pi e o tablet usa ADB/USB. Não é vídeo HDMI nem espelhamento: o tablet renderiza X11, e o KlipperScreen executa no BTT Pi. O tablet estava também conectado ao Wi-Fi; desligar o Wi-Fi para um teste isolado não foi feito nesta sessão.
 
-## Documentação
+## Para reproduzir
 
-- **Comece aqui:** [guia acompanhado, com comandos e resultados esperados](docs/COMECE_AQUI.md).
-- [Tablet testado e compatibilidade](docs/TABLET_TESTADO.md)
-- [FAQ: problemas encontrados e soluções](docs/FAQ.md)
-- [Como continuar com a ajuda de uma IA](docs/CONTINUAR_COM_IA.md)
-- [Instalação e reprodução passo a passo](docs/INSTALACAO.md)
-- [Histórico real, versões e evidências](docs/HISTORICO.md)
-- [Touch: diagnóstico e correção](docs/TOUCH.md)
-- [Diagnóstico, manutenção e rollback](docs/MANUTENCAO.md)
-- [Referências e procedência dos arquivos](docs/REFERENCIAS.md)
-- [Validação dos scripts e evidências](docs/VALIDACAO.md)
-- [Reconexão automática testada](docs/RECONEXAO.md)
-- [Roteiro original de planejamento](docs/REFERENCIA_ORIGINAL.md)
+1. Siga o [guia principal](docs/COMECE_AQUI.md) para chegar à primeira imagem e testar o toque.
+2. Se algo falhar, escolha o sintoma na [FAQ](docs/FAQ.md). Os [reparos avançados](docs/INSTALACAO.md) são apenas para erros específicos e alguns exigem root preexistente.
+3. Com a interface funcionando, instale a [reconexão automática](docs/RECONEXAO.md), se desejar.
+
+Referência: [tablet testado](docs/TABLET_TESTADO.md), [toque](docs/TOUCH.md), [diagnóstico e rollback](docs/MANUTENCAO.md), [evidências históricas](docs/HISTORICO.md), [validação](docs/VALIDACAO.md), [procedência](docs/REFERENCIAS.md) e [roteiro para IA](docs/CONTINUAR_COM_IA.md).
 
 ## Arquivos executáveis e configuração
 
@@ -49,7 +42,7 @@ SSH é usado para administração. O transporte da interface entre o BTT Pi e o 
 | `config/70-btt-tablet-adb.rules` | Permissão USB exclusiva para o VID/PID observado |
 | `checksums.sha256` | Hashes observados dos downloads oficiais |
 
-Não há instalador único: a execução por etapas permite conferir cada resultado. Depois da configuração, o supervisor recupera automaticamente o painel. Não foram incluídos senhas, tokens, APKs, backups do sistema ou configurações da impressora. Os binários devem ser obtidos das fontes oficiais.
+Não há instalador único: a execução por etapas permite conferir cada resultado. Os scripts **exigem configurar serial, usuário e diretório reais**; valores `<Device...>` são apenas marcadores e fazem os launchers falharem de forma explícita. Não foram incluídos senhas, tokens, APKs, backups do sistema ou configurações da impressora. Obtenha binários das fontes oficiais.
 
 ## Resultado e limites
 

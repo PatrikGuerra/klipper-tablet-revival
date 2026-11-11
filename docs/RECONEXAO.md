@@ -65,25 +65,39 @@ Para reverter, desative o supervisor com `sudo systemctl disable --now tablet-us
 
 ## Instalação explícita dos componentes
 
-Execute no BTT, a partir da raiz deste repositório, Os nomes de usuário, serial e caminhos são deste equipamento. Adapte `tablet-usb-common.sh` para outro ambiente. O serviço anterior do KlipperScreen precisa estar habilitado e definir `KS_XCLIENT`.
+Execute no BTT, a partir da raiz deste repositório. Primeiro conclua o [guia principal](COMECE_AQUI.md) e confirme ADB/X11. O serviço existente do KlipperScreen precisa definir `KS_XCLIENT`. Anote o serial mostrado por `adb devices -l`, o usuário de `id -un` e o diretório de `printf '%s\n' "$HOME"`.
 
 ```sh
-mkdir -p ~/tablet-xsdl/autoconnect-before-20261109
-cp ~/KlipperScreen/scripts/launch_KlipperScreen.sh ~/tablet-xsdl/autoconnect-before-20261109/launch_KlipperScreen.sh
-sudo systemctl cat KlipperScreen > ~/tablet-xsdl/autoconnect-before-20261109/KlipperScreen.service.txt
+mkdir -p ~/tablet-xsdl
+backup_dir=$(mktemp -d "$HOME/tablet-xsdl/autoconnect.XXXXXXXX")
+for file in "$HOME/KlipperScreen/scripts/launch_KlipperScreen.sh" /usr/local/lib/tablet-usb-common.sh /usr/local/bin/tablet-usb-watchdog.sh /etc/systemd/system/tablet-usb-watchdog.service; do
+    if sudo test -e "$file"; then
+        sudo cp "$file" "$backup_dir/"
+    fi
+done
+systemctl cat KlipperScreen > "$backup_dir/KlipperScreen.service.txt"
+echo "Backup: $backup_dir"
 bash -n scripts/tablet-usb-common.sh
 bash -n scripts/tablet-usb-watchdog.sh
 bash -n scripts/launch_KlipperScreen-autoconnect.sh
 sudo install -m 0644 scripts/tablet-usb-common.sh /usr/local/lib/tablet-usb-common.sh
+sudoedit /usr/local/lib/tablet-usb-common.sh
+sudo bash -c 'source /usr/local/lib/tablet-usb-common.sh; tablet_online'
+```
+
+No `sudoedit`, substitua **somente nas três linhas de atribuição** os valores `<DeviceSerialNumber>`, `<DeviceUser>` e `<DeviceHome>` por serial, usuário e caminho reais, preservando as aspas. Não altere a condição de validação abaixo delas. Não continue se `tablet_online` falhar. O backup é único a cada execução; guarde o caminho exibido para eventual restauração.
+
+Depois da verificação:
+
+```sh
 sudo install -m 0755 scripts/tablet-usb-watchdog.sh /usr/local/bin/tablet-usb-watchdog.sh
 install -m 0755 scripts/launch_KlipperScreen-autoconnect.sh ~/KlipperScreen/scripts/launch_KlipperScreen.sh
 sudo install -m 0644 config/tablet-usb-watchdog.service /etc/systemd/system/tablet-usb-watchdog.service
 sudo systemctl daemon-reload
 sudo systemctl enable --now tablet-usb-watchdog
-sudo systemctl restart KlipperScreen
 ```
 
-Preserve uma cópia dos arquivos atuais antes de substituí-los; use um diretório novo para essa cópia em cada execução.
+O supervisor reiniciará apenas KlipperScreen quando X11 estiver pronto.
 
 ### Como testar a recuperação
 

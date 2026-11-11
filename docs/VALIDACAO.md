@@ -33,12 +33,16 @@ O guia inteiro não foi repetido do zero: isso exigiria outro tablet ou reinstal
 
 ## Verificação final da automação
 
-Depois dos testes reais, os hashes SHA-256 dos três scripts instalados foram comparados às cópias deste repositório e coincidiram:
+Depois dos testes reais, os scripts instalados **naquela sessão** coincidiam com os arquivos do repositório **antes** da anonimização e desta revisão. Os hashes antigos não identificam as versões publicadas agora; não servem para comprovar que uma instalação atual usa este commit. A configuração local do usuário/serial também faz o arquivo comum instalado diferir intencionalmente do modelo publicado.
 
-| Arquivo | SHA-256 |
-|---|---|
-| `tablet-usb-common.sh` | `a309e1a9faca36cb2fd8607060243a7937b1141de16b7d532a6437d53298d6eb` |
-| `tablet-usb-watchdog.sh` | `1fa394dee5a8abfa79ce94a84be670f3f57a786f3c6d2e9b5a22a4e739c6e30d` |
-| `launch_KlipperScreen-autoconnect.sh` | `933e9b93bbf53d11197befc47f657df4e3c42993e4ca72adc5d4fe2679e76c7d` |
+Para conferir uma instalação nova, execute no BTT a partir da raiz do repositório:
 
-Supervisor e KlipperScreen estavam habilitados no boot; supervisor, KlipperScreen, Klipper e Moonraker estavam ativos. A janela em foco no Android era `x.org.server/.MainActivity`, e a captura final mostrou a interface conectada à impressora.
+```sh
+printf '%s\0' scripts/*.sh | xargs -0 -n 1 bash -n
+python3 -m py_compile scripts/patch_touch.py
+sha256sum scripts/*.sh /usr/local/bin/tablet-usb-watchdog.sh /usr/local/lib/tablet-usb-common.sh
+diff -u scripts/tablet-usb-watchdog.sh /usr/local/bin/tablet-usb-watchdog.sh
+diff -u scripts/tablet-usb-common.sh /usr/local/lib/tablet-usb-common.sh
+```
+
+O `diff` do arquivo comum deve mostrar somente os valores locais configurados. Confira também o launcher instalado contra `scripts/launch_KlipperScreen-autoconnect.sh`; se usa o launcher inicial, compare com `scripts/launch_KlipperScreen.sh`, esperando a substituição do serial. Supervisor e KlipperScreen estavam habilitados no boot no teste original; a janela em foco era `x.org.server/.MainActivity`, e a captura final mostrava a interface conectada à impressora.

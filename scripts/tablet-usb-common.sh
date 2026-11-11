@@ -5,6 +5,10 @@ TABLET_USER=${TABLET_USER:-"<DeviceUser>"}
 TABLET_HOME=${TABLET_HOME:-"<DeviceHome>"}
 TABLET_DISPLAY=${TABLET_DISPLAY:-:100}
 TABLET_KEEP_FOREGROUND=${TABLET_KEEP_FOREGROUND:-1}
+if [[ $TABLET_SERIAL == '<DeviceSerialNumber>' || $TABLET_USER == '<DeviceUser>' || $TABLET_HOME == '<DeviceHome>' ]]; then
+    echo 'Configure TABLET_SERIAL, TABLET_USER e TABLET_HOME em tablet-usb-common.sh antes de iniciar.' >&2
+    exit 1
+fi
 tablet_as_user() {
     if [[ $(id -u) == 0 ]]; then
         setpriv --reuid "$TABLET_USER" --regid "$TABLET_USER" --init-groups env HOME="$TABLET_HOME" ANDROID_SERIAL="$TABLET_SERIAL" "$@"

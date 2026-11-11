@@ -1,63 +1,32 @@
 # Diagnóstico e rollback
 
-Atualização: o sistema agora tem [supervisor de reconexão](RECONEXAO.md). Os comandos abaixo também descrevem a fase inicial da instalação. Para reverter o painel, pare primeiro o supervisor, evitando que ele reabra o aplicativo enquanto você trabalha.
-
-## Verificações rápidas
+Para sintomas, use a [FAQ](FAQ.md). No BTT, escolha o serial exibido por `adb devices -l` e rode o diagnóstico somente de leitura (a consulta ADB pode iniciar o daemon local):
 
 ```sh
-bash scripts/diagnostico.sh <DeviceSerialNumber>
+TABLET_SERIAL='serial-exibido-pelo-adb'
+bash scripts/diagnostico.sh "$TABLET_SERIAL"
 ```
 
-| Sintoma | Verificação/ação |
-|---|---|
-| Host não resolve `btt.local` | Usar o IP atual do BTT; o endereço documentado pode mudar pelo DHCP |
-| ADB sem dispositivo | Cabo de dados, depuração USB e lsusb; preservar webcam/pendrive |
-| `no permissions` | Conferir regra udev, grupo plugdev e modo do nó USB; reiniciar daemon ADB |
-| `unauthorized` | Aceitar autorização no Android desbloqueado |
-| Falha no download das fontes | Ver logs de TLS; obter no BTT pela fonte oficial |
-| Erro XKB/core devices | Conferir configuração X11 e xkbcomp da mesma versão do APK |
-| XSDL sem resposta | Conferir display/porta nos logs; `:0` é 6000, `:1` é 6001 |
-| Toque parece touchpad | Desativar movimento relativo e usar clique normal; ver TOUCH.md |
-| Tela apaga | Conferir `xset -display :100 -q`, timeout esperado 0; configuração Android é separada |
-| Serviço ativo mas sem tela | `active` não prova renderização; verificar resposta X11, logs e imagem |
+## Desativar a integração
 
-## Arquivos alterados no BTT
-
-- Pacote `adb` e suas dependências.
-- `/etc/udev/rules.d/70-btt-tablet-adb.rules`.
-- `<DeviceHome>/KlipperScreen/scripts/launch_KlipperScreen.sh`, antes inexistente.
-- Downloads, reparos e backups sob `<DeviceHome>/tablet-xsdl`.
-
-Não foram alterados Klipper, Moonraker, a unidade systemd do KlipperScreen, webcam ou pendrive. O daemon ADB foi iniciado/reiniciado; só o serviço KlipperScreen foi parado/reiniciado durante os ajustes.
-
-## Voltar ao modo anterior do KlipperScreen
-
-O launcher personalizado não existia antes. Para desativá-lo sem apagar:
+Pare primeiro o supervisor, para que ele não reabra XSDL. O launcher personalizado não existia antes **no equipamento testado**; em outra instalação, restaure o launcher original salvo no diretório de backup informado no [guia principal](COMECE_AQUI.md) ou na [instalação do supervisor](RECONEXAO.md). Não apague uma configuração anterior de terceiros.
 
 ```sh
 sudo systemctl disable --now tablet-usb-watchdog
 sudo systemctl stop KlipperScreen
-mv ~/KlipperScreen/scripts/launch_KlipperScreen.sh ~/tablet-xsdl/launch_KlipperScreen.desativado.sh
+mkdir -p ~/tablet-xsdl
+backup_dir=$(mktemp -d "$HOME/tablet-xsdl/rollback.XXXXXXXX")
+mv ~/KlipperScreen/scripts/launch_KlipperScreen.sh "$backup_dir/"
+echo "Launcher desativado: $backup_dir"
 sudo systemctl start KlipperScreen
 ```
 
-Isso devolve a seleção ao script original `KlipperScreen-start.sh`; o funcionamento anterior com X local depende do hardware/configuração que já existiam. Se já havia launcher em outra instalação, restaure o backup correspondente em vez deste procedimento.
+Sem launcher personalizado, o comportamento volta a depender do `KlipperScreen-start.sh` e da configuração preexistente. Se o serviço não subir, confira `journalctl -u KlipperScreen -n 40 --no-pager` e o backup correspondente. Para retirar a regra USB exclusiva, mova-a para fora de `/etc/udev/rules.d`, recarregue udev e reconecte apenas o tablet; não remova o pacote ADB automaticamente.
 
-Para retirar a regra exclusiva, mova-a para uma pasta de backup fora de `/etc/udev/rules.d`, recarregue udev e reconecte apenas o tablet quando conveniente. Não remova ADB/dependências automaticamente: podem ser úteis para manutenção e não é necessário removê-los para reverter o launcher.
+## Backups no Android
 
-## Android
+- Configuração de toque anterior: `touch-settings-before.cfg` no BTT; veja [TOUCH.md](TOUCH.md).
+- Antes de reparar XSDL, o [guia de reparos](INSTALACAO.md) cria um TAR único em `/sdcard` e o copia ao BTT. Restauração integral não testada.
+- `xkbcomp.pre-repair`, quando criado, aponta para a instalação anterior; não é alternativa funcional garantida.
 
-- Backup do touch: `<DeviceHome>/tablet-xsdl/touch-settings-before.cfg` no BTT.
-- Configuração aplicada: `touch-settings-direct.cfg`.
-- Backup interno: `/sdcard/xsdl-before-repair.tar` no tablet, restauração completa não testada.
-- Link antigo do xkbcomp: `xkbcomp.pre-repair` ao lado do binário reposto; aponta para a instalação anterior e não é uma alternativa funcional garantida.
-
-Não restaure um TAR completo sobre o aplicativo em execução. Examine seu conteúdo e a versão instalada antes de qualquer recuperação. APKs e fontes têm hashes registrados, mas não houve verificação criptográfica independente da identidade do autor além do download da fonte oficial e da instalação pelo Android.
-
-## Próximos testes opcionais
-
-1. Confirmar imagem/toque com Wi-Fi do tablet desligado.
-2. Desconectar/reconectar fisicamente somente o tablet e observar recuperação.
-3. Medir memória/CPU por horas antes de considerar painel definitivo.
-
-Esses itens são pendências. Reboots separados do BTT e tablet, recuperação do XSDL e supervisão via systemd já foram implementados/testados; veja o registro da nova etapa.
+Nunca restaure um TAR completo sobre o aplicativo em execução. Examine conteúdo, proprietário e versão antes. Ainda faltam testes com Wi-Fi desligado, desconexão física do cabo e operação prolongada; reboots do BTT/tablet e retomada do XSDL foram testados.

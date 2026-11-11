@@ -26,7 +26,7 @@ O [DroidKlipp](https://github.com/CodeMasterCody3D/DroidKlipp) também apareceu 
 
 O roteiro inicial mencionava DroidKlipp, VNC e eventual APK customizado. Não foram instalados, desenvolvidos ou integrados durante esta implementação. O app VNC preexistente no tablet não foi alterado.
 
-O documento original contém recomendações e hipóteses anteriores ao teste. Quando houver divergência, o histórico e a evidência desta instalação prevalecem como registro do que aconteceu.
+O planejamento inicial continha recomendações e hipóteses anteriores ao teste e permanece no histórico Git, fora do caminho de reprodução. Quando houver divergência, o [registro da implementação](HISTORICO.md) e a evidência desta instalação prevalecem.
 
 ## Escopo de autoria
 

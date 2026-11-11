@@ -41,13 +41,13 @@ No BTT, com ADB instalado e tablet autorizado, execute:
 
 ```sh
 adb devices -l
-# Substitua SEU_SERIAL pelo valor mostrado na primeira coluna.
-adb -s SEU_SERIAL shell getprop ro.product.model
-adb -s SEU_SERIAL shell getprop ro.product.device
-adb -s SEU_SERIAL shell getprop ro.product.name
-adb -s SEU_SERIAL shell getprop ro.build.version.release
-adb -s SEU_SERIAL shell getprop ro.product.cpu.abi
-adb -s SEU_SERIAL shell id
+TABLET_SERIAL='serial-exibido-pelo-adb'
+adb -s "$TABLET_SERIAL" shell getprop ro.product.model
+adb -s "$TABLET_SERIAL" shell getprop ro.product.device
+adb -s "$TABLET_SERIAL" shell getprop ro.product.name
+adb -s "$TABLET_SERIAL" shell getprop ro.build.version.release
+adb -s "$TABLET_SERIAL" shell getprop ro.product.cpu.abi
+adb -s "$TABLET_SERIAL" shell id
 ```
 
 Se Android, ABI ou permissões forem diferentes, trate como outro ambiente. Use o menu do XSDL para configurar o toque; o patch binário deste projeto é restrito ao perfil testado.
