@@ -63,18 +63,22 @@ mkdir -p "$backup_dir/data-old"
 tar -xzf "$backup_dir/data-1.tgz" -C "$backup_dir/data-old"
 unzip -p ~/tablet-xsdl/XServer-XSDL-1.11.40.apk assets/binaries-armeabi-v7a.zip > "$backup_dir/binaries-old.zip"
 unzip -p "$backup_dir/binaries-old.zip" usr/bin/xkbcomp > "$backup_dir/xkbcomp-old"
-adb -s "$TABLET_SERIAL" push "$backup_dir/data-old/usr" /data/data/x.org.server/files/
-adb -s "$TABLET_SERIAL" shell mv /data/data/x.org.server/files/usr/bin/xkbcomp /data/data/x.org.server/files/usr/bin/xkbcomp.pre-repair
-adb -s "$TABLET_SERIAL" push "$backup_dir/xkbcomp-old" /data/data/x.org.server/files/usr/bin/xkbcomp
-adb -s "$TABLET_SERIAL" shell chmod 755 /data/data/x.org.server/files/usr/bin/xkbcomp
 ```
 
-Na sessão, `chown 10076:10076` foi necessário para os arquivos internos repostos. **Esse UID/GID não é universal.** Use o proprietário observado no seu tablet e verifique após a alteração:
+Pare se a extração falhar ou os arquivos esperados não existirem. Na sessão, `chown 10076:10076` foi necessário para os arquivos internos repostos. **Esse UID/GID não é universal.** Defina o proprietário observado no seu tablet antes de copiar; a condição abaixo impede a cópia enquanto o valor de exemplo não for alterado:
 
 ```sh
 APP_OWNER='uid:gid-observados'
-adb -s "$TABLET_SERIAL" shell busybox chown -R "$APP_OWNER" /data/data/x.org.server/files/usr
-adb -s "$TABLET_SERIAL" shell ls -ld /data/data/x.org.server/files/usr
+if [[ $APP_OWNER =~ ^[0-9]+:[0-9]+$ ]]; then
+    adb -s "$TABLET_SERIAL" push "$backup_dir/data-old/usr" /data/data/x.org.server/files/ &&
+    adb -s "$TABLET_SERIAL" shell mv /data/data/x.org.server/files/usr/bin/xkbcomp /data/data/x.org.server/files/usr/bin/xkbcomp.pre-repair &&
+    adb -s "$TABLET_SERIAL" push "$backup_dir/xkbcomp-old" /data/data/x.org.server/files/usr/bin/xkbcomp &&
+    adb -s "$TABLET_SERIAL" shell chmod 755 /data/data/x.org.server/files/usr/bin/xkbcomp &&
+    adb -s "$TABLET_SERIAL" shell busybox chown -R "$APP_OWNER" /data/data/x.org.server/files/usr &&
+    adb -s "$TABLET_SERIAL" shell ls -ld /data/data/x.org.server/files/usr
+else
+    echo 'Defina APP_OWNER com o UID:GID numérico observado antes de copiar.' >&2
+fi
 ```
 
 Não foi feita limpeza dos dados do aplicativo. O `xkbcomp.pre-repair` preservado é um link da instalação anterior; não é um rollback garantido.

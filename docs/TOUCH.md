@@ -51,14 +51,18 @@ Se o `cmp` indicar mudança concorrente, pare e analise a cópia atual. Caso con
 
 ```sh
 python3 scripts/patch_touch.py "$backup_dir/touch-settings-current.cfg" "$backup_dir/touch-settings-direct.cfg"
-adb -s "$TABLET_SERIAL" push "$backup_dir/touch-settings-direct.cfg" /data/data/x.org.server/files/libsdl-settings.cfg
 APP_OWNER='uid:gid-observados'
-adb -s "$TABLET_SERIAL" shell chown "$APP_OWNER" /data/data/x.org.server/files/libsdl-settings.cfg
-adb -s "$TABLET_SERIAL" shell am start -n x.org.server/.MainActivity
-sudo systemctl start KlipperScreen
+if [[ $APP_OWNER =~ ^[0-9]+:[0-9]+$ ]]; then
+    adb -s "$TABLET_SERIAL" push "$backup_dir/touch-settings-direct.cfg" /data/data/x.org.server/files/libsdl-settings.cfg &&
+    adb -s "$TABLET_SERIAL" shell chown "$APP_OWNER" /data/data/x.org.server/files/libsdl-settings.cfg &&
+    adb -s "$TABLET_SERIAL" shell am start -n x.org.server/.MainActivity &&
+    sudo systemctl start KlipperScreen
+else
+    echo 'Defina APP_OWNER com o UID:GID numérico observado antes de aplicar o patch.' >&2
+fi
 ```
 
-O UID 10076 foi observado somente neste tablet. Substitua `APP_OWNER` pelo UID:GID observado; não use literalmente `uid:gid-observados` nem presuma que 10076 vale para outro dispositivo.
+O UID 10076 foi observado somente neste tablet. Substitua `APP_OWNER` pelo UID:GID observado; não use literalmente `uid:gid-observados` nem presuma que 10076 vale para outro dispositivo. Se o patch ou a transferência falhar, restaure o arquivo original de `backup_dir` antes de reiniciar o serviço.
 
 Foi feita uma leitura posterior do arquivo no Android e comparação byte a byte com o arquivo aplicado. O serviço voltou ativo, o XServer respondeu e os logs confirmaram inicialização da impressora no KlipperScreen. Não foi necessário inserir valores de calibração manualmente.
 

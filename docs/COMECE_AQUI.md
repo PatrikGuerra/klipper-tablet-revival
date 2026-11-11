@@ -185,7 +185,7 @@ install -m 0755 scripts/launch_KlipperScreen.sh ~/KlipperScreen/scripts/launch_K
 nano ~/KlipperScreen/scripts/launch_KlipperScreen.sh
 ```
 
-Altere a linha `export ANDROID_SERIAL="<DeviceSerialNumber>"` para o serial mostrado pelo seu ADB. Salve. Confira:
+Altere a atribuição `export ANDROID_SERIAL=...` para o serial mostrado pelo seu ADB. Preserve a condição de validação logo abaixo. Salve. Confira:
 
 ```sh
 bash -n ~/KlipperScreen/scripts/launch_KlipperScreen.sh
